@@ -1,0 +1,18 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">#22b8cf</item>
+    </style>
+
+    <style name="MyAppThemeFour" parent="Theme.AppCompat.Light">
+        <item name="android:timePickerDialogTheme">@style/MyTimePickerDialogStyle</item>
+    </style>
+    <style name="MyTimePickerDialogStyle" parent="@style/ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="showTitle">false</item>
+        <item name="colorControlActivated">#B322cfc9</item>
+        <item name="colorAccent">#4EC6D9</item>
+    </style>
+
+</resources>

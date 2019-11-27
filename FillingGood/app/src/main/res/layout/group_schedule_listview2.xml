@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="306dp"
+            android:layout_height="97dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/circulus_button">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="326dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:text="TextView"
+                android:textColor="#000000"
+                android:textSize="15sp" />
+
+            <TextView
+                android:textSize="15sp"
+                android:textColor="#000000"
+                android:id="@+id/time"
+                android:layout_width="330dp"
+                android:layout_height="30dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:text="TextView" />
+
+            <TextView
+                android:textSize="15sp"
+                android:textColor="#000000"
+                android:id="@+id/location"
+                android:layout_width="330dp"
+                android:layout_height="30dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:text="TextView" />
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/recommend"
+            android:layout_width="115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/circulus_button2"
+            android:drawableLeft="@drawable/ic_thumb_up_black_24dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="10dp"
+            android:text="시간 및 장소 추천 받기"
+            android:layout_marginLeft="230dp"/>
+    </LinearLayout>
+</LinearLayout>
