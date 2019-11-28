@@ -6,6 +6,9 @@ public class Group {
     private String name;
     private String description;
     private ArrayList<String> groupMembers;
+    private ArrayList<GroupSchedule> groupSchedules;
+    private ArrayList<GroupSchedule> preivousSchedules;
+    private TimeTable[] Days;
 
     public Group(){
 
@@ -18,8 +21,14 @@ public class Group {
 
     public String getName(){return name;}
     public void setName(String name){this.name = name;}
+
     public String getDescription(){return description;}
     public void setDescription(String description){this.description = description;}
+
     public ArrayList<String> getGroupMembers(){return groupMembers;}
     public void setGroupMembers(ArrayList<String> groupMembers){this.groupMembers = groupMembers;}
+
+    public ArrayList<GroupSchedule> getGroupSchedules(){return groupSchedules;}
+
+    public ArrayList<GroupSchedule> getPreivousSchedules(){return preivousSchedules;}
 }
