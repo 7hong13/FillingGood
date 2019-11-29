@@ -30,8 +30,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.fillinggood.Database.ScheduleContract;
-import com.example.fillinggood.Database.ScheduleDbHelper;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;

@@ -20,7 +20,6 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import com.example.fillinggood.Database.ScheduleContract;
 import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;

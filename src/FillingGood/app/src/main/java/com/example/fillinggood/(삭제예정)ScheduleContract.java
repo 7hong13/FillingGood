@@ -2,8 +2,9 @@ package com.example.fillinggood.Database;
 
 import android.provider.BaseColumns;
 
+
 // Schedule Table 정보를 담을 계약 클래스
-public class ScheduleContract {
+/*public class ScheduleContract {
 
     // private 생성자
     private ScheduleContract() {};
@@ -20,3 +21,4 @@ public class ScheduleContract {
         public static final String COLUMN_NAME_END_TIME = "endTime";
     }
 }
+*/

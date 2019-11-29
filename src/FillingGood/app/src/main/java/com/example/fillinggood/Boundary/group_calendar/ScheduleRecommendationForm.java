@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleList;
-import com.example.fillinggood.Entity.RecommendedTimes;
 import com.example.fillinggood.R;
 
 

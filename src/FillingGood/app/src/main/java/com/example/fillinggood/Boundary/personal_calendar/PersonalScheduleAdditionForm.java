@@ -24,8 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
-import com.example.fillinggood.Database.ScheduleContract;
-import com.example.fillinggood.Database.ScheduleDbHelper;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -134,6 +132,7 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
         });
 
         //여기서부터는 mysql 문법에 맞춰 수정해주세요
+        /*
         Intent intent = getIntent();
         if (intent != null) {
             // 누군가 나를 호출했다면,
@@ -151,7 +150,7 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
             mDateTextView.setText(DATE);
             mStartTimeTextView.setText(START_TIME);
             mEndTimeTextView.setText(END_TIME);
-        }
+        } */
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,6 +181,7 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
         String START_TIME = mStartTimeTextView.getText().toString();
         String END_TIME = mEndTimeTextView.getText().toString();
 
+        /*
         // SQLite에 저장하는 기본적인 방법 = ContentValues라는 객체를 만들어 거기에 담아서 DB에 저장
         ContentValues contentValues = new ContentValues();
         contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_NAME, NAME);
@@ -206,6 +206,6 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
             setResult(RESULT_OK);
         }
         // 잘 되었는지 안 되었는지는 return 값으로 확인 가능
-        // 잘 되었다면 return row_ID(long type), 안 되었다면 return -1
+        // 잘 되었다면 return row_ID(long type), 안 되었다면 return -1*/
     }
 }

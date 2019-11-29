@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+/*
 public class ScheduleDbHelper extends SQLiteOpenHelper {
 
     private static ScheduleDbHelper sInstance;
@@ -53,3 +54,4 @@ public class ScheduleDbHelper extends SQLiteOpenHelper {
         // 바로 윗줄은 onCreate(db)와 동일
     }
 }
+*/
