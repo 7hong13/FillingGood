@@ -12,10 +12,9 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.fillinggood.Control.FeedbackController;
 import com.example.fillinggood.R;
 
-//"모임 내역"에서 날짜 및 그룹 일정 선택시, 등록 완료된 피드백을 보여주는 fragment입니다
-//(ScheduleFeeds entity attribute에 맞춰 코드 수정 예정)
 public class FeedbackModificationForm extends Fragment {
     private String description;
     private String name;
@@ -23,6 +22,9 @@ public class FeedbackModificationForm extends Fragment {
     private String startTime;
     private String endTime;
     private String location;
+
+    final static protected FeedbackController feedController = new FeedbackController();;
+
     FeedbackModificationForm(){}
     FeedbackModificationForm(String name, String description, String date, String startTime, String endTime, String location){
         this.description = description;
@@ -75,6 +77,8 @@ public class FeedbackModificationForm extends Fragment {
             @Override
             public void onClick(View v) {
                 //피드백 수정사항을 저장하는 코드
+                //FeedbackController.UpdateFeed(feedback.getText().toString());
+                feedController.UpdateFeed(feedback.getText().toString());
             }
         });
 
@@ -82,6 +86,8 @@ public class FeedbackModificationForm extends Fragment {
             @Override
             public void onClick(View v) {
                 //피드백을 삭제하는 코드
+                //FeedbackController.DeleteFeed(feedback.getText().toString());
+                feedController.DeleteFeed(feedback.getText().toString());
             }
         });
 

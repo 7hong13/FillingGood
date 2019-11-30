@@ -1,6 +1,7 @@
 package com.example.fillinggood.Boundary.group_calendar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,9 @@ public class FeedbackAdditionForm extends Fragment {
     private String startTime;
     private String endTime;
     private String location;
+
+    final static protected FeedbackController feedController = new FeedbackController();
+
     FeedbackAdditionForm(){}
     FeedbackAdditionForm(String name, String description, String date, String startTime, String endTime, String location){
         this.description = description;
@@ -72,7 +76,9 @@ public class FeedbackAdditionForm extends Fragment {
             @Override
             public void onClick(View v) {
                 //피드백 내용 저장하는 코드
-                FeedbackController.AddFeed(feedback.getText().toString());
+                //FeedbackController.AddFeed(feedback.getText().toString());
+                feedController.AddFeed(feedback.getText().toString());
+                Log.d("Next", "빠져나가야...");
             }
         });
         return root;

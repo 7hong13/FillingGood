@@ -54,7 +54,6 @@ public class GroupFeedbackList extends Fragment {
 
         //GUI 구성을 보이기 위한 설정으로 choicedTimeRank와 choicedLocationRank 값이 -1이면 아직 피드백 등록을 안 한 걸로,
         //0이면 아직 모임 일정 날짜가 다가오지 않을 걸로, 그 외는 피드백 등록을 한 걸로 가정
-        //(ScheduleFeeds entity attribute에 맞춰 코드 수정 예정)
         ArrayList<GroupSchedule> meetingsList = new ArrayList<>();
         meetingsList.add(new GroupSchedule("4조","융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.11.20", "15:00", "16:00", 1, 1));
         meetingsList.add(new GroupSchedule("4조","융종설 모임", "K관", "발표 준비", "2019.11.20", "20:00", "21:00", -1, -1));

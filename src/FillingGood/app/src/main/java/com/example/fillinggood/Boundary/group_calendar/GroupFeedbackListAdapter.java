@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
+import com.example.fillinggood.Control.FeedbackController;
 
 import java.util.ArrayList;
 
@@ -87,6 +88,8 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
                     @Override
                     public void onClick(View v) {
                         addFeedback(gs.getName(), gs.getDescription(), gs.getDate(), gs.getStartTime(), gs.getEndTime(), gs.getLocation());
+                        // gs를 넘겨줘야함.
+                        FeedbackAdditionForm.feedController.selectedSchedule = gs;
                     }
                 });
             } else if (theType == 1){
@@ -102,6 +105,8 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
                     @Override
                     public void onClick(View v) {
                         showFeedback(gs.getName(), gs.getDescription(), gs.getDate(), gs.getStartTime(), gs.getEndTime(), gs.getLocation());
+                        // gs를 넘겨줘야함.
+                        FeedbackModificationForm.feedController.selectedSchedule = gs;
                     }
                 });
             }
