@@ -20,6 +20,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".Boundary.personal_calendar.ExternalScheduleAdditionForm"
+            android:label="외부 일정 연동"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".Boundary.personal_calendar.PersonalScheduleAdditionForm"

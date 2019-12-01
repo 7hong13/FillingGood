@@ -122,7 +122,7 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
                 holder.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(context, "아직 피드백을 등록할 수 없습니다", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "아직 피드백을 등록할 수 없습니다", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

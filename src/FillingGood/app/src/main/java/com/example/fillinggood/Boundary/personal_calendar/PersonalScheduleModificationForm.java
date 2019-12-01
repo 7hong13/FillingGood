@@ -5,13 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
+import com.example.fillinggood.Boundary.group_calendar.GroupScheduleAdditionForm;
 import com.example.fillinggood.Control.PersonalScheduleController;
 import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.R;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -191,14 +194,42 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 modifyButtonClicked();
+
                 onBackPressed();
+                Toast.makeText(PersonalScheduleModificationForm.this, "일정이 수정되었습니다", Toast.LENGTH_SHORT).show();
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteButtonClicked();
-                onBackPressed();
+                AlertDialog.Builder builder = new AlertDialog.Builder(PersonalScheduleModificationForm.this);
+                builder.setTitle("개인 일정 삭제")        // 제목 설정
+                        .setMessage("해당 일정을 삭제하겠습니까?")        // 메세지 설정
+                        .setCancelable(false)        // 뒤로 버튼 클릭시 취소 가능 설정
+                        .setPositiveButton("삭제 확인", new DialogInterface.OnClickListener(){
+                            // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
+                            public void onClick(DialogInterface dialog, int whichButton){
+                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                deleteButtonClicked();
+                                onBackPressed();
+                                Toast.makeText(PersonalScheduleModificationForm.this, "일정이 삭제되었습니다", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                            // 취소 버튼 클릭시 설정, 왼쪽 버튼입니다.
+                            public void onClick(DialogInterface dialog, int whichButton){
+                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                onBackPressed();
+                            }
+                        });
+                final AlertDialog dialog = builder.create();    // 알림창 객체 생성
+
+                dialog.setOnShowListener( new DialogInterface.OnShowListener()
+                { @Override public void onShow(DialogInterface arg0) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK); } });
+
+                dialog.show();    // 알림창 띄우기
             }
         });
     }

@@ -103,25 +103,6 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
         weekView.setMonthChangeListener(this);
         weekView.goToHour(8);
 
-        /*  ArrayList<WeekViewEvent> events = new ArrayList<>();
-            Calendar startTime = Calendar.getInstance();
-            startTime.set(Calendar.HOUR_OF_DAY, 3);
-            startTime.set(Calendar.MINUTE, 0);
-            startTime.set(Calendar.DAY_OF_MONTH, 25);
-            startTime.set(Calendar.MONTH, 10);
-            startTime.set(Calendar.YEAR, 2019);
-            Calendar endTime = (Calendar) startTime.clone();
-
-            endTime.set(Calendar.DAY_OF_MONTH, 25);
-            endTime.set(Calendar.MONTH, 10);
-            endTime.set(Calendar.YEAR, 2019);
-            endTime.set(Calendar.HOUR_OF_DAY, 4);
-            endTime.set(Calendar.MINUTE, 0);
-            WeekViewEvent event = new WeekViewEvent(1, "1순위", startTime, endTime);
-
-            event.setColor(Color.parseColor("#22c6cf"));
-            events.add(event);*/
-
         //시간 추천 리스트를 보여주는 fragment 호출
         showTimeRecommendation();
     }

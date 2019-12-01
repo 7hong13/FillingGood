@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -79,6 +80,15 @@ public class FeedbackAdditionForm extends Fragment {
                 //FeedbackController.AddFeed(feedback.getText().toString());
                 feedController.AddFeed(feedback.getText().toString());
                 Log.d("Next", "빠져나가야...");
+
+
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.feedback, new GroupFeedbackList(date))
+                        .addToBackStack(null)
+                        .commit();
+
+                Toast.makeText(getContext(), "피드백이 등록되었습니다", Toast.LENGTH_SHORT).show();
             }
         });
         return root;

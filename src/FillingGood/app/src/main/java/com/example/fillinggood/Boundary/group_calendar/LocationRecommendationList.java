@@ -1,11 +1,13 @@
 package com.example.fillinggood.Boundary.group_calendar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -14,12 +16,12 @@ import com.example.fillinggood.R;
 import java.util.ArrayList;
 
 //장소 추천 리스트를 보여주는 class입니다(GroupRecommendationForm 하단에 뜨는 fragment)
-public class LocationRecommendationList extends Fragment {
+public class LocationRecommendationList extends Fragment{
     private RadioButton rank1, rank2, rank3, rank4, rank5;
     private Button saveResult;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState){
         View root = inflater.inflate(R.layout.location_recommendation_list, container, false);
 
         //GUI 구성을 보이기 위한 arryalist로 db 구축 후 지우고 사용해주세요
@@ -49,6 +51,12 @@ public class LocationRecommendationList extends Fragment {
             @Override
             public void onClick(View v) {
                 //결과 저장하는 코드
+
+                //if 추천순위 미선택,  Toast.makeText(getContext(), “선택된 장소가 없습니다", Toast.LENGTH_SHORT).show();
+
+                //else, 아래 코드 실행
+                getActivity().onBackPressed();
+                Toast.makeText(getContext(), "추천 순위가 등록되었습니다", Toast.LENGTH_SHORT).show();
             }
         });
         return root;

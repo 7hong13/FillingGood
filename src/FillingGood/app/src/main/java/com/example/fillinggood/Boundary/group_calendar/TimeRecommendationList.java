@@ -52,7 +52,10 @@ public class TimeRecommendationList extends Fragment {
             @Override
             public void onClick(View v) {
                 //결과 저장하는 코드를 작성해주세요
-                //장소 추천 목록을 보여주는 fragment 호출
+
+                //if 추천순위 미선택,  Toast.makeText(getContext(), “선택된 시간이 없습니다", Toast.LENGTH_SHORT).show();
+
+                //else, 장소 추천 목록을 보여주는 fragment 호출
                 showLocationRecommendation();
             }
         });
@@ -67,4 +70,5 @@ public class TimeRecommendationList extends Fragment {
 
         fragmentTransaction.commit();
     }
+
 }

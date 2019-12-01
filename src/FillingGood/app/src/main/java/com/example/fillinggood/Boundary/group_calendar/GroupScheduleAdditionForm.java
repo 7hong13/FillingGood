@@ -1,6 +1,8 @@
 package com.example.fillinggood.Boundary.group_calendar;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,9 +12,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleModificationForm;
 import com.example.fillinggood.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -101,10 +105,35 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
         saveSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //일정 등록하는 코드
-            }
-        });
+                AlertDialog.Builder builder = new AlertDialog.Builder(GroupScheduleAdditionForm.this);
+                builder.setTitle("모임 일정")        // 제목 설정
+                        .setMessage("일정을 등록하겠습니까?")        // 메세지 설정
+                        .setCancelable(false)        // 뒤로 버튼 클릭시 취소 가능 설정
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                            // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
+                            public void onClick(DialogInterface dialog, int whichButton){
+                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                onBackPressed();
+                                Toast.makeText(GroupScheduleAdditionForm.this, "일정이 등록되었습니다", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                            // 취소 버튼 클릭시 설정, 왼쪽 버튼입니다.
+                            public void onClick(DialogInterface dialog, int whichButton){
+                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                onBackPressed();
+                            }
+                        });
+                final AlertDialog dialog = builder.create();    // 알림창 객체 생성
 
+                dialog.setOnShowListener( new DialogInterface.OnShowListener()
+                { @Override public void onShow(DialogInterface arg0) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK); } });
+
+                dialog.show();    // 알림창 띄우기
+        }
+        });
     }
 
 }

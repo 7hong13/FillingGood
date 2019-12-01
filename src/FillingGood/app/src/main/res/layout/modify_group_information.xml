@@ -24,8 +24,6 @@
                 android:id="@+id/toolbar_title"
                 android:textSize="20sp"/>
         </androidx.appcompat.widget.Toolbar>
-
-
     </com.google.android.material.appbar.AppBarLayout>
     <ScrollView
         android:layout_width="match_parent"

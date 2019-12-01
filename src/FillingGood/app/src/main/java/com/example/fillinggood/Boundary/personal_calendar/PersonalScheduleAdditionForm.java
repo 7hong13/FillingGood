@@ -156,6 +156,8 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
             public void onClick(View v) {
                 saveButtonClicked();
                 onBackPressed();
+
+                Toast.makeText(PersonalScheduleAdditionForm.this, "일정이 등록되었습니다", Toast.LENGTH_SHORT).show();
             }
         });
     }
