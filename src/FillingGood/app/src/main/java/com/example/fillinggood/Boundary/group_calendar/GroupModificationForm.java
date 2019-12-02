@@ -117,7 +117,7 @@ public class GroupModificationForm extends AppCompatActivity {
                             // 취소 버튼 클릭시 설정, 왼쪽 버튼입니다.
                             public void onClick(DialogInterface dialog, int whichButton){
                                 //원하는 클릭 이벤트를 넣으시면 됩니다.
-                                onBackPressed();
+
                             }
                         });
                 final AlertDialog dialog = builder.create();    // 알림창 객체 생성
