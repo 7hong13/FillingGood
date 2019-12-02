@@ -78,7 +78,6 @@ public class FeedbackModificationForm extends Fragment {
             @Override
             public void onClick(View v) {
                 //피드백 수정사항을 저장하는 코드
-                //FeedbackController.UpdateFeed(feedback.getText().toString());
                 feedController.UpdateFeed(feedback.getText().toString());
 
                 getActivity().getSupportFragmentManager()
@@ -95,7 +94,6 @@ public class FeedbackModificationForm extends Fragment {
             @Override
             public void onClick(View v) {
                 //피드백을 삭제하는 코드
-                //FeedbackController.DeleteFeed(feedback.getText().toString());
                 feedController.DeleteFeed(feedback.getText().toString());
 
                 getActivity().getSupportFragmentManager()

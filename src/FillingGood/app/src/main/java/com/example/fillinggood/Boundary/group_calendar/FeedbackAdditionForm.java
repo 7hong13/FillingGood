@@ -79,8 +79,6 @@ public class FeedbackAdditionForm extends Fragment {
                 //피드백 내용 저장하는 코드
                 //FeedbackController.AddFeed(feedback.getText().toString());
                 feedController.AddFeed(feedback.getText().toString());
-                Log.d("Next", "빠져나가야...");
-
 
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
