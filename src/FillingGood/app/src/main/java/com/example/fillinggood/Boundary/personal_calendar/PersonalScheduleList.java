@@ -51,16 +51,13 @@ public class PersonalScheduleList extends Fragment {
 
     //날짜별 일정들 시간순대로 정렬하는 함수
     private final static Comparator<PersonalSchedule> myComparator= new Comparator<PersonalSchedule>() {
-        private final Collator   collator = Collator.getInstance();
-
+        private final Collator collator = Collator.getInstance();
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         public int compare(PersonalSchedule object1,PersonalSchedule object2) {
             return  collator.compare(object1.getStartTime(), object2.getStartTime());
-
         }
     };
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -118,6 +115,7 @@ public class PersonalScheduleList extends Fragment {
                 intent.putExtra("name", s.substring(0,n-14));
                 intent.putExtra("startTime", s.substring(n-12,n-7));
                 intent.putExtra("endTime", s.substring(n-6,n-1));
+                intent.putExtra("date", date);
 
                 startActivity(intent);
             }

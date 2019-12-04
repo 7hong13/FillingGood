@@ -53,7 +53,7 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton fixed, hardly, easily;
     private long mScheduleID = -1;
-    public String name, location, description, priority, date, startTime, endTime, amPm;
+    public String name, location, description, priority, date, startTime, endTime;
 
 
     @Override
@@ -87,6 +87,8 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
         mDescriptionEditText = findViewById(R.id.event_description);
 
         mDateTextView = findViewById(R.id.event_date);
+        date = getIntent().getStringExtra("date");
+        mDateTextView.setText(date);
 
         mStartTimeTextView = findViewById(R.id.event_start_time);
         startTime = getIntent().getStringExtra("startTime");
@@ -113,10 +115,9 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
         Iterator<PersonalSchedule> iter = eventsList.iterator();
         while (iter.hasNext()) {
             PersonalSchedule p = iter.next();
-            if (p.getName().equals(name) && p.getStartTime().equals(startTime) && p.getEndTime().equals(endTime)){
+            if (p.getDate().equals(date) && p.getName().equals(name) && p.getStartTime().equals(startTime) && p.getEndTime().equals(endTime)){
                 mLocationEditText.setText(p.getLocation());
                 mDescriptionEditText.setText(p.getDescription());
-                mDateTextView.setText(p.getDate());
                 //조정 가능성 체크
                 if (p.getPriority().equals("불가")) fixed.setChecked(true);
                 else if (p.getPriority().equals("약간 가능")) hardly.setChecked(true);

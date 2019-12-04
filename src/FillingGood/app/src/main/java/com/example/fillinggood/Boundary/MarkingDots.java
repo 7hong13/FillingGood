@@ -18,6 +18,7 @@ public class MarkingDots{
     public static List<CalendarDay> markingDots(@NonNull Void... voids){
 
         //GUI 구성을 보이기 위한 array로, DB 구축 후 적절한 코드로 대체해주세요
+        //개인 회원이 가진 모든 일정 날짜 여기서 가져온 후, dates array-list에 추가
         String[] datesHavingEvents = new String[3];
         datesHavingEvents[0] = new String("2019.11.20");
         datesHavingEvents[1] = new String("2019.11.22");
