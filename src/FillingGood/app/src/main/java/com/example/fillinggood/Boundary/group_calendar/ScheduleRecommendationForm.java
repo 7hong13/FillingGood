@@ -22,6 +22,7 @@ import java.util.List;
 //추천 결과 보여주는 class 입니다
 public class ScheduleRecommendationForm extends AppCompatActivity implements MonthLoader.MonthChangeListener{
     private com.alamkanak.weekview.WeekView weekView;
+    private String groupName, date, startTime;
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
@@ -102,6 +103,9 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
         weekView = findViewById(R.id.weekView);
         weekView.setMonthChangeListener(this);
         weekView.goToHour(8);
+        groupName = getIntent().getStringExtra("groupName");
+        date = getIntent().getStringExtra("date");
+        startTime = getIntent().getStringExtra("startTime");
 
         //시간 추천 리스트를 보여주는 fragment 호출
         showTimeRecommendation();

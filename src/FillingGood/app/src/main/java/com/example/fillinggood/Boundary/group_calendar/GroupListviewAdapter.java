@@ -1,7 +1,10 @@
 package com.example.fillinggood.Boundary.group_calendar;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +13,10 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.fillinggood.Boundary.home.MainActivity;
+import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleModificationForm;
 import com.example.fillinggood.R;
 
 import org.w3c.dom.Text;
@@ -68,6 +73,7 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 //해당 버튼을 누를시, 그룹 정보를 수정하는 class로 이동합니다
                 Intent intent = new Intent(v.getContext(), GroupModificationForm.class);
+                intent.putExtra("groupInfo", list.get(position));
                 context.startActivity(intent);
             }
         });
@@ -76,9 +82,35 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
         deleteButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //해당 버튼을 누를시, 그룹 정보가 db에서 삭제되도록 코드를 짜주세요
-                list.remove(position); //or some other task
-                notifyDataSetChanged();
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("모임 삭제")        // 제목 설정
+                        .setMessage("해당 모임을 삭제하겠습니까?")        // 메세지 설정
+                        .setCancelable(false)        // 뒤로 버튼 클릭시 취소 가능 설정
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener(){
+                            // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
+                            public void onClick(DialogInterface dialog, int whichButton){
+                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                list.remove(position); //or some other task
+                                notifyDataSetChanged();
+                                //해당 버튼을 누를시, 그룹 정보가 db에서 삭제되도록 코드를 짜주세요
+                                Toast.makeText(context, "일정이 삭제되었습니다", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                            // 취소 버튼 클릭시 설정, 왼쪽 버튼입니다.
+                            public void onClick(DialogInterface dialog, int whichButton){
+                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+
+                            }
+                        });
+                final AlertDialog dialog = builder.create();    // 알림창 객체 생성
+
+                dialog.setOnShowListener( new DialogInterface.OnShowListener()
+                { @Override public void onShow(DialogInterface arg0) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK); } });
+
+                dialog.show();    // 알림창 띄우기
             }
         });
 

@@ -106,6 +106,9 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
                         //else일 경우, 아래 activity class로 이동
                         //(else 일 때 case1: 리더이다(프리패스), case2: 리더는 아니지만 리더가 추천생성을 해둔 상태(조건부 패스))
                         Intent intent = new Intent(v.getContext(), ScheduleRecommendationForm.class);
+                        intent.putExtra("groupName", gs.getGroupName());
+                        intent.putExtra("date", gs.getDate());
+                        intent.putExtra("startTime", gs.getStartTime());
                         context.startActivity(intent);
                     }
                 });

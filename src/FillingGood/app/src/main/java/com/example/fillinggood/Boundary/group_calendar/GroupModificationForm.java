@@ -28,33 +28,38 @@ public class GroupModificationForm extends AppCompatActivity {
     ListView groupMembers;
     Button addMember, saveResult;
     ArrayList<String> list = new ArrayList<String>();
+    String sGroupName, sDescription, sGroupMembers;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.modify_group_information);
 
-        //GUI 구성을 보이기 위한 코드로 db 구축 후 지우고 사용해주세요
+        String groupInfo = getIntent().getStringExtra("groupInfo");
+        String[] temp = groupInfo.split("\n");
+        sGroupName = temp[0].split(": ")[1];
+        sDescription = temp[1].split(": ")[1];
+        sGroupMembers = temp[2];
+        String[] tempNames = sGroupMembers.split(", ");
+
         ArrayList<String> names = new ArrayList<>();
-        names.add("abc1");
-        names.add("abc2");
-        names.add("abc3");
-        names.add("abc4");
-        names.add("abc5");
-        Group groupInfo = new Group("4조", "융합소프트웨어 종합설계 팀플조", names);
+        names.add(tempNames[0].substring(5,8));
+        for (int i=1; i<tempNames.length; i++)
+            names.add(tempNames[i]);
 
         //모임명으로 입력된 값
         groupName = (EditText)findViewById(R.id.groupName);
-        groupName.setText(groupInfo.getName());
+        groupName.setText(sGroupName);
 
         //모임 설명으로 입력된 값
         groupDescription = (EditText)findViewById(R.id.groupDescription);
-        groupDescription.setText(groupInfo.getDescription());
+        groupDescription.setText(sDescription);
 
         //모임 구성원 추가 입력창에 입력된 값(모임원 아이디)
         addedGroupMember = (EditText)findViewById(R.id.groupMember);
 
         //현재 추가된 모임 구성원 이름들
         groupMembers = (ListView)findViewById(R.id.groupMembers);
+
         //기존 모임 구성원들이 화면상 추가돼 있도록 보여주는 코드
         Iterator<String> iter = names.iterator();
         while (iter.hasNext()){
@@ -95,8 +100,6 @@ public class GroupModificationForm extends AppCompatActivity {
             public void onClick(View v) {
                 //모임 정보를 db로 올리는 코드를 작성해주세요
 
-
-                //else일 때 아래 두줄 실행
                 AlertDialog.Builder builder = new AlertDialog.Builder(GroupModificationForm.this);
                 builder.setTitle("모임 정보 수정")        // 제목 설정
                         .setMessage("모임 정보를 수정하겠습니까?")        // 메세지 설정
