@@ -26,21 +26,31 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
     private String date;
     private String tempDate2 = "";
     private boolean isEventsShown = true ;
+    private CalendarDay todayDate;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_schedule_history);
         materialCalendarView = (MaterialCalendarView)findViewById(R.id.calendarView);
+        todayDate = CalendarDay.today();
+        //오늘 날짜값 계산, 다가올 날짜인지 이미 지난 날짜인지 확인하는 데 필요
+        long today = todayDate.getYear()*10000 + (todayDate.getMonth()+1)*100 + todayDate.getDay();
 
         //GUI 구성을 보이기 위한 코드로 db 구축 후 지워주세요
         //datesPassed는 이미 지난 날짜로 회색 점을,
         //datesUpcomming은 오늘+다가올 날짜로 하늘색 점을 찍습니다
         //CalendarDay는 0월-11월로 구성돼 month-1을 했습니다
         ArrayList<CalendarDay> datesPassed = new ArrayList<>();
+        ArrayList<CalendarDay> datesUpcoming = new ArrayList<>();
+
+        /*이미 지난 일정인지, 다가오는 일정인지 체크하는 파트*/
+        //int year = Integer.parseInt(date.substring(0,4)); int month = Integer.parseInt(date.substring(5,7));
+        //int day = Integer.parseInt(date.substring(8,10));
+        //long date = year*10000 + month*100 + day;
+        //if date<today, datesPassed.add(CalendarDay.from(year, month-1, day));
+        //if date>=today, datesUpcoming.add(CalendarDay.from(year, month-1, day));
         datesPassed.add(CalendarDay.from(2019, 10, 20));
         datesPassed.add(CalendarDay.from(2019, 10, 21));
-
-        ArrayList<CalendarDay> datesUpcoming = new ArrayList<>();
         datesUpcoming.add(CalendarDay.from(2019, 10, 27));
 
         //일정을 가진 날짜에 점 찍는 함수

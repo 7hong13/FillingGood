@@ -53,13 +53,33 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
     }
     @Override
     public int getItemViewType(int position) {
-        //아직 피드백을 등록하지 않았다면
-        if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
-            return 0;
         //모임 일정이 아직 다가오지 않아 피드백 등록이 불가능하다면
-        else if (groupScheduleList.get(position).getChoicedTimeRank()==0 && groupScheduleList.get(position).getChoicedTimeRank()==0)
+        /*
+        String Date = groupScheduleList.get(position).getDate();
+        int year = Integer.parseInt(Date.substring(0,4)); int month = Integer.parseInt(Date.substring(5,7));
+        int day = Integer.parseInt(Date.substring(8,10));
+        long date = year*10000 + month*100 + day;
+
+        Calendar todayDate = CalendarDay.today();
+        long today = todayDate.getYear()*10000 + (todayDate.getMonth()+1)*100 + todayDate.getDay();
+        if (date<=today)
+        */
+        if (groupScheduleList.get(position).getChoicedTimeRank()==0 && groupScheduleList.get(position).getChoicedTimeRank()==0)
             return 2;
+
+        //아직 피드백을 등록하지 않았다면
+        //String groupName =  groupScheduleList.get(postion).getName();
+        //String date = groupScheduleList.get(position).getDate();
+        //String startTime = groupScheduleList.get(position).getStartTime();
+        //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재하지 않을 때
+        else if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
+            return 0;
+
         //피드백을 등록했다면
+        //String groupName =  groupScheduleList.get(postion).getName();
+        //String date = groupScheduleList.get(position).getDate();
+        //String startTime = groupScheduleList.get(position).getStartTime();
+        //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재할 때
         else return 1;
     }
     public static class ViewHolder {
