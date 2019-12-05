@@ -1,5 +1,6 @@
 package com.example.fillinggood.Boundary.group_calendar;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -27,10 +28,17 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
     private String tempDate2 = "";
     private boolean isEventsShown = true ;
     private CalendarDay todayDate;
+    private String groupName;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_schedule_history);
+
+        groupName = getIntent().getStringExtra("groupName");
+        GroupFeedbackList fragment = new GroupFeedbackList();
+        Bundle bundle = new Bundle();
+        bundle.putString("groupName", groupName);
+
         materialCalendarView = (MaterialCalendarView)findViewById(R.id.calendarView);
         todayDate = CalendarDay.today();
         //오늘 날짜값 계산, 다가올 날짜인지 이미 지난 날짜인지 확인하는 데 필요
@@ -44,11 +52,18 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
         ArrayList<CalendarDay> datesUpcoming = new ArrayList<>();
 
         /*이미 지난 일정인지, 다가오는 일정인지 체크하는 파트*/
-        //int year = Integer.parseInt(date.substring(0,4)); int month = Integer.parseInt(date.substring(5,7));
-        //int day = Integer.parseInt(date.substring(8,10));
-        //long date = year*10000 + month*100 + day;
-        //if date<today, datesPassed.add(CalendarDay.from(year, month-1, day));
-        //if date>=today, datesUpcoming.add(CalendarDay.from(year, month-1, day));
+        /*
+        ArrayList<GroupSchedule> gs = getGroupSchedule(groupName);
+        Iterator<GroupSchedule> iter = gs.iterator();
+        while (iter.hasNext()){
+            String date = iter.next().getDate();
+            int year = Integer.parseInt(date.substring(0,4)); int month = Integer.parseInt(date.substring(5,7));
+            int day = Integer.parseInt(date.substring(8,10));
+            long Date = year*10000 + month*100 + day;
+            if (Date<today), datesPassed.add(CalendarDay.from(year, month-1, day));
+            if (Date>=today), datesUpcoming.add(CalendarDay.from(year, month-1, day));
+        }
+        * */
         datesPassed.add(CalendarDay.from(2019, 10, 20));
         datesPassed.add(CalendarDay.from(2019, 10, 21));
         datesUpcoming.add(CalendarDay.from(2019, 10, 27));

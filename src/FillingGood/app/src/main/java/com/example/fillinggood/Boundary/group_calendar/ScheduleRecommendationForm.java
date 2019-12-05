@@ -17,6 +17,7 @@ import com.example.fillinggood.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 //추천 결과 보여주는 class 입니다
@@ -27,20 +28,52 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
         /*
-        ArrayList<String> list = new ArrayLIst<>()에 "0000.00.00" 형태로 추천 리스트를 받아온다는 가정하에, 달력 생성 코드 적어둡니다
+        ArrayList<String> list = new ArrayList<>(); //시간 추천 결과 5순위를 담고있는 arraylist라고 가정
+        //ArrayList<String> list = getRecommended().. 이런식으로..
         Calendar startTime;
         Calendar endTime;
 
+        int i = 1;
         Iterator<String> iter = list.iterator();
         while (iter.hasNext()){
             String s = iter.next();
-            String[] temp =
-        }
-        * */
+            //2019.11.11 12:00 ~ 2019.11.11 13:00
+            int hour, minute, day, hour2, minute2;
+            if (s.length()==35){
+                hour = Integer.parseInt(s.substring(11,13));
+                minute = Integer.parseInt(s.substring(14,16));
+                day = Integer.parseInt(s.substring(9,11));
+                hour2 = Integer.parseInt(s.substring(30,32));
+                minute2 = Integer.parseInt(s.substring(33,35));
+            }
+            else {
+            //2019.11.1 12:00 ~ 2019.11.1 13:00
+                hour = Integer.parseInt(s.substring(10,12));
+                minute = Integer.parseInt(s.substring(13,15));
+                day = Integer.parseInt(s.substring(9,10));
+                hour2 = Integer.parseInt(s.substring(28,30));
+                minute2 = Integer.parseInt(s.substring(31,33));
+            }
+            startTime = Calendar.getInstance();
+            startTime.set(Calendar.HOUR_OF_DAY, hour);
+            startTime.set(Calendar.MINUTE, minute);
+            startTime.set(Calendar.DAY_OF_MONTH, day);
+            startTime.set(Calendar.MONTH, newMonth - 1);
+            startTime.set(Calendar.YEAR, newYear);
+
+            endTime = (Calendar) startTime.clone();
+            endTime.set(Calendar.HOUR_OF_DAY, hour2);
+            endTime.set(Calendar.MINUTE, minute2);
+            endTime.set(Calendar.MONTH, newMonth - 1);
+            WeekViewEvent event = new WeekViewEvent(i, i+"순위", startTime, endTime);
+            event.setColor(Color.parseColor("#8022c6cf"));
+            events.add(event);
+        }*/
+
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 15);
         startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.DAY_OF_MONTH, 26);
+        startTime.set(Calendar.DAY_OF_MONTH, 9);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         Calendar endTime = (Calendar) startTime.clone();
@@ -53,7 +86,7 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
         startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 17);
         startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.DAY_OF_MONTH, 27);
+        startTime.set(Calendar.DAY_OF_MONTH, 12);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
@@ -64,9 +97,9 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
         events.add(event1);
 
         startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, 11);
+        startTime.set(Calendar.HOUR_OF_DAY, 10);
         startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.DAY_OF_MONTH, 29);
+        startTime.set(Calendar.DAY_OF_MONTH, 10);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
@@ -79,7 +112,7 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
         startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 14);
         startTime.set(Calendar.MINUTE, 30);
-        startTime.set(Calendar.DAY_OF_MONTH, 28);
+        startTime.set(Calendar.DAY_OF_MONTH, 11);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
@@ -91,9 +124,9 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
         events.add(event3);
 
         startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, 21);
+        startTime.set(Calendar.HOUR_OF_DAY, 12);
         startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.DAY_OF_MONTH, 29);
+        startTime.set(Calendar.DAY_OF_MONTH, 13);
         startTime.set(Calendar.MONTH, newMonth - 1);
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();

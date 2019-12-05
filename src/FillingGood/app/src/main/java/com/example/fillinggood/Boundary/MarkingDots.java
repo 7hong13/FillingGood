@@ -36,9 +36,9 @@ public class MarkingDots{
         (아래 임시 데이터 지우기)
         */
 
-        datesHavingEvents.add("2019.11.20");
-        datesHavingEvents.add("2019.11.22");
-        datesHavingEvents.add("2019.11.27");
+        datesHavingEvents.add("2019.12.05");
+        datesHavingEvents.add("2019.12.08");
+        datesHavingEvents.add("2019.12.10");
 
         ArrayList<CalendarDay> dates = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();

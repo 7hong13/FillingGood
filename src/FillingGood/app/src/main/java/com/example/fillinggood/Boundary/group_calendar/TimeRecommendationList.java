@@ -28,11 +28,12 @@ public class TimeRecommendationList extends Fragment {
 
         //GUI 구성을 보이기 위한 arryalist로 db 구축 후 지우고 사용해주세요
         ArrayList<String> rt = new ArrayList<>();
-        rt.add("11월 26일 화요일 15:00-16:00");
-        rt.add("11월 27일 수요일 17:00-18:00");
-        rt.add("11월 29일 금요일 11:00-12:00");
-        rt.add("11월 28일 목요일 14:30-15:10");
-        rt.add("11월 28일 목요일 21:00-22:00");
+        //ArrayList<String> list = getRecommended().. 이런식으로 작성 필요
+        rt.add("2019.12.9 15:00 ~ 2019.12.9 16:00");
+        rt.add("2019.12.12 17:00 ~ 2019.12.12 18:00");
+        rt.add("2019.12.10 10:00 ~ 2019.12.10 11:00");
+        rt.add("2019.12.11 14:30 ~ 2019.12.11 15:10");
+        rt.add("2019.12.13 12:00 ~ 2019.12.13 13:00");
 
         rank1 = (RadioButton)root.findViewById(R.id.rank1);
         rank2 = (RadioButton)root.findViewById(R.id.rank2);

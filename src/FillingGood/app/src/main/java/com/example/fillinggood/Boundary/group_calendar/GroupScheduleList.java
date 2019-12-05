@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 //그룹의 일정 목록을 보여주는 class입니다
 public class GroupScheduleList extends AppCompatActivity {
-
+    private  String groupName;
     /*
     //날짜순대로 일정 정렬하는 함수
     private final static Comparator<GroupSchedule> myComparator= new Comparator<GroupSchedule>() {
@@ -39,6 +39,7 @@ public class GroupScheduleList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_schedule_list);
+        groupName = getIntent().getStringExtra("groupName");
         /*
         ArrayList<GroupSchedule> meetingsList = getGroupSchedule(groupName);
         아래 코드 나중에 지워주세요

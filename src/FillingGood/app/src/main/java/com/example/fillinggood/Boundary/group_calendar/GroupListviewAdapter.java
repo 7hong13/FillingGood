@@ -102,11 +102,12 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //if 모임장 아니면
-                /*if (getGroupLeader(list.get(position).getName())!=userID) {
+                /*if (!getGroupLeader(list.get(position).getName()).equals(userID)) {
                     Toast.makeText(context, "모임장만 접근이 가능합니다", Toast.LENGTH_SHORT).show();
+                    return;
                 }*/
 
-                //else, 아래 전체 수행
+                //if에 안 걸리면, 아래 전체 수행
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("모임 삭제")        // 제목 설정
                         .setMessage("해당 모임을 삭제하겠습니까?")        // 메세지 설정
@@ -148,6 +149,7 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 //해당 버튼을 누를시, 그룹 내 새로운 일정을 생성하는 클래스로 이동합니다
                 Intent intent = new Intent(v.getContext(), GroupScheduleList.class);
+                intent.putExtra("groupName", list.get(position).getName());
                 context.startActivity(intent);
             }
         });
@@ -158,6 +160,7 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 //해당 버튼을 누를시, 그룹이 가졌던 일정 내역을 보여주는 클래스로 이동합니다
                 Intent intent = new Intent(v.getContext(), GroupScheduleHistoryForm.class);
+                intent.putExtra("groupName", list.get(position).getName());
                 context.startActivity(intent);
             }
         });

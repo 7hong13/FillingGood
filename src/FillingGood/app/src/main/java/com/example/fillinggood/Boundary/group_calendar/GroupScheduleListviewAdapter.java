@@ -56,7 +56,8 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
     @Override
     public int getItemViewType(int position) {
         //아직 추천을 안받은 경우(추천 생성 안 되어있거나(모임장), 생성은 돼 있으나 로그인한 멤버가 추천 투표 안한 경우(비모임장))
-        //if (groupScheduleList.get(position).getRecommending()==null || groupScheduleList.get(position).getChoicedTime()==null)
+        //if (groupScheduleList.get(position).getRecommending()==null || groupScheduleList.get(position).getChoicedTimeRank()==null)
+        //나중에 아래 if문 지워주세요
         if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
             return 1;
         //추천을 이미 받은 경우
@@ -92,17 +93,16 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
                 holder.location = (TextView) view.findViewById(R.id.location);
                 holder.time = (TextView) view.findViewById(R.id.time);
                 holder.name.setText("모임 일정명 : " + gs.getName());
-                holder.location.setText("장소 : " + gs.getLocation());
-                holder.time.setText("시간 : " + gs.getStartTime() + "~" + gs.getEndTime());
+                holder.location.setText("장소 : 미정");
+                holder.time.setText("시간 : 미정");
                 holder.recommendButton = (Button) view.findViewById(R.id.recommend);
 
-                //추천 받기 버튼 눌렀을 때(리더만 가능)
                 holder.recommendButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //if 해당 회원의 모임내 역할이 리더가 아니고, 리더가 추천을 아직 받지 않은 경우,
                         //리더가 추천을 아직 받지 않았다는 메세지 띄우고 접근 제한
-                        /*if (getGroupLeader(gs.getGroupName)!=userID && groupScheduleList.get(position).getRecommending()==null)
+                        /*if (!getGroupLeader(gs.getGroupName).equals(userID) && groupScheduleList.get(position).getRecommending()==null)
                         Toast.makeText(context, "모임장이 아직 추천 생성을 하지 않았습니다.", Toast.LENGTH_LONG).show();*/
 
                         //else일 경우, 아래 activity class로 이동

@@ -27,6 +27,7 @@ import java.util.Iterator;
 //"모임 내역"에서 날짜 선택시, 해당 날짜에 가졌던(혹은 가질) 모임 내역을 리스트업 하는 fragment입니다
 public class GroupFeedbackList extends Fragment {
     private String date;
+    private String groupName;
     public GroupFeedbackList() {
         // Required empty public constructor
     }
@@ -49,37 +50,44 @@ public class GroupFeedbackList extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
+                             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.feedback_listview, container, false);
 
         //GUI 구성을 보이기 위한 설정으로 choicedTimeRank와 choicedLocationRank 값이 -1이면 아직 피드백 등록을 안 한 걸로,
         //0이면 아직 모임 일정 날짜가 다가오지 않을 걸로, 그 외는 피드백 등록을 한 걸로 가정
-        ArrayList<GroupSchedule> meetingsList = new ArrayList<>();
-        meetingsList.add(new GroupSchedule("4조","융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.11.20", "15:00", "16:00", 1, 1));
-        meetingsList.add(new GroupSchedule("4조","융종설 모임", "K관", "발표 준비", "2019.11.20", "20:00", "21:00", -1, -1));
-        meetingsList.add(new GroupSchedule("4조","융종설 모임", "J관", "유스케이스 스펙 작성 토의", "2019.11.21", "15:00", "16:00", -1, -1));
-        meetingsList.add(new GroupSchedule("4조","융종설 모임", "신촌", "아이디어 상의", "2019.11.27", "12:00", "13:30", 0, 0));
 
-        //날짜별 일정을 시간 오름차순으로 정렬
-        Collections.sort(meetingsList, myComparator);
+        Bundle extra = this.getArguments();
+        if (extra != null) {
+            extra = getArguments();
+            groupName = extra.getString("groupName");}
 
-        Iterator<GroupSchedule> iter1 = meetingsList.iterator(); // iterator(반복자)를 얻는다.
-        ArrayList<GroupSchedule> meetingsForSelectedDay = new ArrayList<>();
-        while (iter1.hasNext()) {
-            GroupSchedule gs = iter1.next();
-            if (date.equals(gs.getDate())){
-                meetingsForSelectedDay.add(gs);
+            ArrayList<GroupSchedule> meetingsList = new ArrayList<>();
+            // ArrayList<GroupSchedule> meetingsList = getGroupSchedule(groupName);
+            //아래 코드들 나중에 지워주세요
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.11.20", "15:00", "16:00", 1, 1));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "K관", "발표 준비", "2019.11.20", "20:00", "21:00", -1, -1));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "J관", "유스케이스 스펙 작성 토의", "2019.11.21", "15:00", "16:00", -1, -1));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "신촌", "아이디어 상의", "2019.11.27", "12:00", "13:30", 0, 0));
+
+            //날짜별 일정을 시간 오름차순으로 정렬
+            Collections.sort(meetingsList, myComparator);
+
+            Iterator<GroupSchedule> iter1 = meetingsList.iterator(); // iterator(반복자)를 얻는다.
+            ArrayList<GroupSchedule> meetingsForSelectedDay = new ArrayList<>();
+            while (iter1.hasNext()) {
+                GroupSchedule gs = iter1.next();
+                if (date.equals(gs.getDate())) {
+                    meetingsForSelectedDay.add(gs);
+                }
             }
+
+            //ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, meetingsForSelectedDay);
+            GroupFeedbackListAdapter adapter = new GroupFeedbackListAdapter(meetingsForSelectedDay, getActivity());
+
+            ListView listview = (ListView) root.findViewById(R.id.feedback_listview);
+            listview.setAdapter(adapter);
+
+
+            return root;
         }
-
-        //ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, meetingsForSelectedDay);
-        GroupFeedbackListAdapter adapter = new GroupFeedbackListAdapter(meetingsForSelectedDay, getActivity());
-
-        ListView listview = (ListView) root.findViewById(R.id.feedback_listview) ;
-        listview.setAdapter(adapter);
-
-
-        return root;
-    }
-
 }

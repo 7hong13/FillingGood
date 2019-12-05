@@ -68,7 +68,7 @@ public class GroupListFragment extends Fragment {
         memlist.add("김형준");
         memlist.add("김지현");
         memlist.add("김동욱");
-        list.add(new Group("융종설 4팀","망할 융종설",memlist));
+        list.add(new Group("융종설 4팀","융합소프트웨어 종합 설계 19-2학기",memlist));
 
 
         //instantiate custom adapter

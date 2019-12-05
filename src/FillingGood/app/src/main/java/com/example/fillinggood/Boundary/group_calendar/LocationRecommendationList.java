@@ -26,6 +26,7 @@ public class LocationRecommendationList extends Fragment{
 
         //GUI 구성을 보이기 위한 arryalist로 db 구축 후 지우고 사용해주세요
         ArrayList<String> rl = new ArrayList<>();
+        //ArrayList<String> list = getRecommended().. 이런식으로 작성 필요
         rl.add("J관 4층 휴게실");
         rl.add("커피 브레이크");
         rl.add("파관 스터디룸");

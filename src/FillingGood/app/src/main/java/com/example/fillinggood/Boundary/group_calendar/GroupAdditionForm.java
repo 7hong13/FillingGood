@@ -80,6 +80,11 @@ public class GroupAdditionForm extends AppCompatActivity {
                 intent.putExtra("description", description);
                 intent.putExtra("check", true);
                 intent.putExtra("groupmem", list);
+                /*if 그룹명 중복,
+                {
+                    Toast.makeText(GroupAdditionForm.this, "이미 존재하는 모임명입니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
                 setResult(RESULT_OK,intent);
                 finish();
 

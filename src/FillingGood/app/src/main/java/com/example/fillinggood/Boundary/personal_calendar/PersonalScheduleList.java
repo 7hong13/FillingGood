@@ -66,21 +66,21 @@ public class PersonalScheduleList extends Fragment {
 
         //GUI가 어떻게 구성되는지 보여주기 위한 arraylist로, DB 구축 후 지우고 사용해주세요
         /*
-        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(user);
+        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(userID);
         (아래 코드 지우기)
         * */
         ArrayList<PersonalSchedule> eventsList = new ArrayList<>();
-        PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.11.20", "12:00", "13:00");
+        PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.12.5", "12:00", "13:00");
         eventsList.add(event1);
-        PersonalSchedule event2 = new PersonalSchedule("약속", "신촌역", "친구랑 영화", "가능", "2019.11.20", "14:00", "16:00");
+        PersonalSchedule event2 = new PersonalSchedule("약속", "신촌역", "친구랑 영화", "가능", "2019.12.5", "14:00", "16:00");
         eventsList.add(event2);
-        PersonalSchedule event3 = new PersonalSchedule("알바", "대흥역", "카페 알바", "약간 가능", "2019.11.22", "12:00", "17:00");
+        PersonalSchedule event3 = new PersonalSchedule("알바", "대흥역", "카페 알바", "약간 가능", "2019.12.8", "12:00", "17:00");
         eventsList.add(event3);
-        PersonalSchedule event4 = new PersonalSchedule("수업", "J관", "전공 수업", "불가", "2019.11.20", "09:00", "10:15");
+        PersonalSchedule event4 = new PersonalSchedule("수업", "J관", "전공 수업", "불가", "2019.12.8", "09:00", "10:15");
         eventsList.add(event4);
-        PersonalSchedule event5 = new PersonalSchedule("수업", "K관", "교양 수업", "불가", "2019.11.20", "10:30", "12:00");
+        PersonalSchedule event5 = new PersonalSchedule("수업", "K관", "교양 수업", "불가", "2019.12.8", "10:30", "12:00");
         eventsList.add(event5);
-        PersonalSchedule event6 = new PersonalSchedule("스터디", "GN관", "알고리즘 스터디", "null", "2019.11.27", "15:00", "16:00");
+        PersonalSchedule event6 = new PersonalSchedule("스터디", "GN관", "알고리즘 스터디", "null", "2019.12.10", "15:00", "16:00");
         eventsList.add(event6);
 
         //날짜별 일정을 시간 오름차순으로 정렬
@@ -116,6 +116,7 @@ public class PersonalScheduleList extends Fragment {
                 intent = new Intent(getActivity(),PersonalScheduleModificationForm.class);
                 String s = (String)parent.getItemAtPosition(position);
                 int n = s.length();
+
                 intent.putExtra("name", s.substring(0,n-14));
                 intent.putExtra("startTime", s.substring(n-12,n-7));
                 intent.putExtra("endTime", s.substring(n-6,n-1));

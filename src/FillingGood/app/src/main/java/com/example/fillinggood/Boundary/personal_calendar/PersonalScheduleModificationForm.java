@@ -67,17 +67,17 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
         (아래 임시 데이터 지우기)
         * */
         ArrayList<PersonalSchedule> eventsList = new ArrayList<>();
-        PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.11.20", "12:00", "13:00");
+        PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.12.5", "12:00", "13:00");
         eventsList.add(event1);
-        PersonalSchedule event2 = new PersonalSchedule("약속", "신촌역", "친구랑 영화", "가능", "2019.11.20", "14:00", "16:00");
+        PersonalSchedule event2 = new PersonalSchedule("약속", "신촌역", "친구랑 영화", "가능", "2019.12.5", "14:00", "16:00");
         eventsList.add(event2);
-        PersonalSchedule event3 = new PersonalSchedule("알바", "대흥역", "카페 알바", "약간 가능", "2019.11.22", "12:00", "17:00");
+        PersonalSchedule event3 = new PersonalSchedule("알바", "대흥역", "카페 알바", "약간 가능", "2019.12.8", "12:00", "17:00");
         eventsList.add(event3);
-        PersonalSchedule event4 = new PersonalSchedule("수업", "J관", "전공 수업", "불가", "2019.11.20", "09:00", "10:15");
+        PersonalSchedule event4 = new PersonalSchedule("수업", "J관", "전공 수업", "불가", "2019.12.8", "09:00", "10:15");
         eventsList.add(event4);
-        PersonalSchedule event5 = new PersonalSchedule("수업", "K관", "교양 수업", "불가", "2019.11.20", "10:30", "12:00");
+        PersonalSchedule event5 = new PersonalSchedule("수업", "K관", "교양 수업", "불가", "2019.12.8", "10:30", "12:00");
         eventsList.add(event5);
-        PersonalSchedule event6 = new PersonalSchedule("스터디", "GN관", "알고리즘 스터디", "null", "2019.11.27", "15:00", "16:00");
+        PersonalSchedule event6 = new PersonalSchedule("스터디", "GN관", "알고리즘 스터디", "null", "2019.12.10", "15:00", "16:00");
         eventsList.add(event6);
 
         // element 할당하기
@@ -126,9 +126,10 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
                 if (p.getPriority().equals("불가")) fixed.setChecked(true);
                 else if (p.getPriority().equals("약간 가능")) hardly.setChecked(true);
                 else if (p.getPriority().equals("가능")) easily.setChecked(true);
+                int n = p.getDate().length();
                 int year = Integer.parseInt(p.getDate().substring(0,4));
                 int month = Integer.parseInt(p.getDate().substring(5,7));
-                int day = Integer.parseInt(p.getDate().substring(8,10));
+                int day = Integer.parseInt(p.getDate().substring(8,n));
                 //선택한 날짜 체크 표시
                 CalendarDay selectedDate = CalendarDay.from(year, month-1, day);
                 mCalendarView.setDateSelected(selectedDate,true);

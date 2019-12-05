@@ -68,18 +68,25 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
             return 2;
 
         //아직 피드백을 등록하지 않았다면
-        //String groupName =  groupScheduleList.get(postion).getName();
-        //String date = groupScheduleList.get(position).getDate();
-        //String startTime = groupScheduleList.get(position).getStartTime();
         //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재하지 않을 때
+        /*
+        ArrayList<GroupSchedule.Feed> list = getFeeds(groupScheduleList.get(position));
+        Iterator<GroupSchedule.Feed> iter = list.iterator();
+        boolean flag = false;
+        while (iter.hasNext()){
+            GroupSchedule.Feed gf = iter.next();
+            if (iter.getFeedID.equals(userID)){
+                flag = true;
+                break;}
+        }
+        if (!flag) return 0;
+        * */
         else if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
             return 0;
 
         //피드백을 등록했다면
-        //String groupName =  groupScheduleList.get(postion).getName();
-        //String date = groupScheduleList.get(position).getDate();
-        //String startTime = groupScheduleList.get(position).getStartTime();
         //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재할 때
+        //if (flag) return 1;
         else return 1;
     }
     public static class ViewHolder {
