@@ -25,7 +25,7 @@ public class ExternalScheduleAdditionForm extends AppCompatActivity {
         ET_year = (EditText)findViewById(R.id.ET_year);
         ET_semester = (EditText)findViewById(R.id.ET_semester);
 
-        save_result = (Button)findViewById(R.id.save_result);
+        save_result = (Button)findViewById(R.id.saveResult);
 
         save_result.setOnClickListener(new View.OnClickListener() {
             @Override

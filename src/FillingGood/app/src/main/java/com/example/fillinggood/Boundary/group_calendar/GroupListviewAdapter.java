@@ -122,7 +122,7 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
                                 if(mListener != null) {
                                     mListener.onDeleteClick(position);
                                 }
-                                Toast.makeText(context, "일정이 삭제되었습니다", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "모임이 삭제되었습니다", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener(){
