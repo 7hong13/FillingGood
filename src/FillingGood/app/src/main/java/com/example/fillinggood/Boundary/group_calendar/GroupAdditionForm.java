@@ -2,6 +2,7 @@ package com.example.fillinggood.Boundary.group_calendar;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -71,14 +72,18 @@ public class GroupAdditionForm extends AppCompatActivity {
         saveResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //모임 정보를 db로 올리는 코드를 작성해주세요
 
-                //if 이름 중복이 있다면
-                // Toast.makeText(GroupAdditionForm.this, "이미 존재하는 모임 이름입니다", Toast.LENGTH_SHORT).show();
+                String name = groupName.getText().toString();
+                String description = groupDescription.getText().toString();
+                Intent intent = new Intent(GroupAdditionForm.this,GroupListFragment.class);
+                intent.putExtra("name", name);
+                intent.putExtra("description", description);
+                intent.putExtra("check", true);
+                intent.putExtra("groupmem", list);
+                setResult(RESULT_OK,intent);
+                finish();
 
-                //else일 때 아래 두줄 실행
                 Toast.makeText(GroupAdditionForm.this, "모임이 등록되었습니다", Toast.LENGTH_SHORT).show();
-                onBackPressed();
             }
         });
 

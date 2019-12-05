@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.fillinggood.Boundary.home.MainActivity;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleModificationForm;
+import com.example.fillinggood.Entity.Group;
 import com.example.fillinggood.R;
 
 import org.w3c.dom.Text;
@@ -25,12 +26,22 @@ import java.util.ArrayList;
 
 //"내 모임 목록"에서 개별 모임의 관리를 맡는 class로, 밑에 "삭제 버튼"에 대한 코드만 작성해주시면 됩니다
 public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<String> list = new ArrayList<>();
+    private ArrayList<Group> list = new ArrayList<>();
     private Context context;
 
-    public GroupListviewAdapter(ArrayList<String> list, Context context) {
+    public GroupListviewAdapter(ArrayList<Group> list, Context context) {
         this.list = list;
         this.context = context;
+    }
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
+
+    private OnItemClickListener mListener;
+    public interface OnItemClickListener{
+        void onDeleteClick(int position);
+        void onChangeClick(int position);
+
     }
 
     @Override
@@ -57,9 +68,14 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.group_listview, null);
         }
+
         //Handle TextView and display string from your list
         TextView groupInfo = (TextView)view.findViewById(R.id.groupInfo);
-        groupInfo.setText(list.get(position));
+        TextView groupde = (TextView)view.findViewById(R.id.groupde);
+        TextView groupmem = (TextView)view.findViewById(R.id.groupmem);
+        groupInfo.setText(list.get(position).getName());
+        groupde.setText(list.get(position).getDescription());
+        groupmem.setText(list.get(position).getGroupMembers().toString());
 
         //Handle buttons and add onClickListeners
         Button modifyButton = (Button)view.findViewById(R.id.button1);
@@ -72,9 +88,12 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //해당 버튼을 누를시, 그룹 정보를 수정하는 class로 이동합니다
-                Intent intent = new Intent(v.getContext(), GroupModificationForm.class);
+                /*Intent intent = new Intent(v.getContext(), GroupModificationForm.class);
                 intent.putExtra("groupInfo", list.get(position));
-                context.startActivity(intent);
+                context.startActivity(intent);*/
+                if(mListener != null) {
+                    mListener.onChangeClick(position);
+                }
             }
         });
 
@@ -90,9 +109,12 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
                             // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
                             public void onClick(DialogInterface dialog, int whichButton){
                                 //원하는 클릭 이벤트를 넣으시면 됩니다.
-                                list.remove(position); //or some other task
-                                notifyDataSetChanged();
+                                //list.remove(position); //or some other task
+                                //notifyDataSetChanged();
                                 //해당 버튼을 누를시, 그룹 정보가 db에서 삭제되도록 코드를 짜주세요
+                                if(mListener != null) {
+                                    mListener.onDeleteClick(position);
+                                }
                                 Toast.makeText(context, "일정이 삭제되었습니다", Toast.LENGTH_SHORT).show();
                             }
                         })
