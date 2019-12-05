@@ -1,7 +1,10 @@
 package com.example.fillinggood.Boundary;
 
+import android.app.Person;
+
 import androidx.annotation.NonNull;
 
+import com.example.fillinggood.Entity.PersonalSchedule;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 public class MarkingDots{
@@ -22,15 +26,16 @@ public class MarkingDots{
 
         ArrayList<String> datesHavingEvents = new ArrayList<>();
         /*
-        ArrayList<PersonalSchedule> ps = getPersonalSchedule(user);
-        Iterator iter = ps.iterator();
+        ArrayList<PersonalSchedule> ps = getPersonalSchedule(userID);
+        Iterator<PersonalSchedule> iter = ps.iterator();
         while (iter.hasNext()){
-            ps = iter.next();
-            String date = ps.getDate();
+            PersonalSchedule p = iter.next();
+            String date = p.getDate();
             datesHavingEvents.add(date);
         }
         (아래 임시 데이터 지우기)
         */
+
         datesHavingEvents.add("2019.11.20");
         datesHavingEvents.add("2019.11.22");
         datesHavingEvents.add("2019.11.27");

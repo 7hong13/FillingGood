@@ -40,6 +40,21 @@ public class PersonalSchedule extends Schedule{
     }
 
     // GETTERs & SETTERs
+    public String getName() {return  name;}
+    public void setName(String name) {this.name = name;}
+
+    public String getDescription() {return description;}
+    public void setDescription(String description) {this.description = description;}
+
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
+
+    public String getDate() {return date;}
+    public void setDate(String date) {this.date = date;}
+
+    public String getStartTime() {return startTime;}
+    public void setStartTime(String startTime) {this.startTime = startTime;}
+
+    public String getEndTime() {return endTime;}
+    public void setEndTime(String endTime) {this.endTime = endTime;}
 }

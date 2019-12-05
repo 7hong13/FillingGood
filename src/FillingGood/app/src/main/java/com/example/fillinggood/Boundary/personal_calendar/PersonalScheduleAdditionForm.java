@@ -24,13 +24,16 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
+import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.ravikoradiya.library.CenterTitle;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 
 //일정 추가 floating button을 눌렀을 때 실행되는 class 입니다
 public class PersonalScheduleAdditionForm extends AppCompatActivity {
@@ -154,6 +157,29 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //필수 기입 정보인 일정명, 시간 기입 안 한 경우
+                //date를 startDate랑 endDate로 나누시면 거기에 맞춰서 조건문 수정해주세요
+                if (mNameEditText.getText().toString().length() == 0 || mDateTextView.getText().toString().length()==0
+                || mStartTimeTextView.getText().toString().length()==0 || mEndTimeTextView.getText().toString().length()==0){
+                    Toast.makeText(PersonalScheduleAdditionForm.this, "기입하지 않은 정보가 존재합니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //시간대가 타 일정과 중복될 경우(시작시간과 끝시간이 완전히 일치하는 경우만 고려했습니다...test date set도 맞춰서 작성할게요..)
+
+                /*
+                ArrayList<PersonalSchedule> ps = getPersonalSchedule(userID);
+                Iterator<PersonalSchedule> iter = ps.iterator();
+                while (iter.hasNext()){
+                    PersonalSchedule p = iter.next();
+                    if (p.getDate().equals(mDateTextView.getText().toString())){
+                        if (p.getStartTime().equals(mStartTimeTextView.getText().toString())
+                                || p.getEndTime().equals(mEndTimeTextView.getText().toString())){
+                            Toast.makeText(PersonalScheduleAdditionForm.this, "해당 시간대에 이미 등록된 일정이 존재합니다", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }*/
+
                 saveButtonClicked();
                 onBackPressed();
 

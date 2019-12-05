@@ -63,7 +63,7 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
 
         //GUI 구성을 보이기 위한 array-list로 db 구축 후 지워주세요
         /*
-        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(user);
+        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(userID);
         (아래 임시 데이터 지우기)
         * */
         ArrayList<PersonalSchedule> eventsList = new ArrayList<>();
@@ -198,8 +198,29 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
         modifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modifyButtonClicked();
+                //필수 기입 정보인 일정명, 시간 기입 안 한 경우
+                //date를 startDate랑 endDate로 나누시면 거기에 맞춰서 조건문 수정해주세요
+                if (mNameEditText.getText().toString().length() == 0 || mDateTextView.getText().toString().length()==0
+                        || mStartTimeTextView.getText().toString().length()==0 || mEndTimeTextView.getText().toString().length()==0){
+                    Toast.makeText(PersonalScheduleModificationForm.this, "기입하지 않은 정보가 존재합니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //시간대가 타 일정과 중복될 경우(시작시간과 끝시간이 완전히 일치하는 경우만 고려했습니다...test date set도 맞춰서 작성할게요..)
 
+                /*
+                ArrayList<PersonalSchedule> ps = getPersonalSchedule(userID);
+                Iterator<PersonalSchedule> iter = ps.iterator();
+                while (iter.hasNext()){
+                    PersonalSchedule p = iter.next();
+                    if (p.getDate().equals(mDateTextView.getText().toString())){
+                        if (p.getStartTime().equals(mStartTimeTextView.getText().toString())
+                                || p.getEndTime().equals(mEndTimeTextView.getText().toString())){
+                            Toast.makeText(PersonalScheduleAdditionForm.this, "해당 시간대에 이미 등록된 일정이 존재합니다", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }*/
+                modifyButtonClicked();
                 onBackPressed();
                 Toast.makeText(PersonalScheduleModificationForm.this, "일정이 수정되었습니다", Toast.LENGTH_SHORT).show();
             }
