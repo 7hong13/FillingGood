@@ -56,6 +56,7 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
     @Override
     public int getItemViewType(int position) {
         //아직 추천을 안받은 경우
+        //if (groupScheduleList.getRecommending()==null)
         if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
             return 1;
         //추천을 이미 받은 경우
