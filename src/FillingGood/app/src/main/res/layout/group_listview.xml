@@ -20,7 +20,6 @@
             >
 
             <TextView
-
                 android:id="@+id/groupInfo"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
@@ -28,26 +27,32 @@
                 android:minLines="1"
                 android:padding="10dp"
                 android:text="TextView"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                android:textSize="17dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="#000000"/>
 
             <TextView
                 android:id="@+id/groupde"
                 android:layout_width="230dp"
-                android:layout_height="89dp"
+                android:layout_height="80dp"
                 android:background="@drawable/circulus_button"
                 android:minLines="1"
                 android:padding="10dp"
+                android:textColor="#000000"
+                android:textSize="15dp"
                 android:text="group info" />
 
             <TextView
                 android:id="@+id/groupmem"
                 android:layout_width="230dp"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:background="@drawable/circulus_button"
-                android:minLines="1"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:padding="10dp"
                 android:text="group info"
-                android:textSize="10dp" />
+                android:textColor="#000000"
+                android:textSize="12dp" />
 
         </LinearLayout>
 

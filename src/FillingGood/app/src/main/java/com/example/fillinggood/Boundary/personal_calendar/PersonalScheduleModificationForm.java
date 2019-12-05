@@ -62,6 +62,10 @@ public class PersonalScheduleModificationForm extends AppCompatActivity {
         setContentView(R.layout.modify_personal_schedule);
 
         //GUI 구성을 보이기 위한 array-list로 db 구축 후 지워주세요
+        /*
+        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(user);
+        (아래 임시 데이터 지우기)
+        * */
         ArrayList<PersonalSchedule> eventsList = new ArrayList<>();
         PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.11.20", "12:00", "13:00");
         eventsList.add(event1);

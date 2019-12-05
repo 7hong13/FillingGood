@@ -56,6 +56,11 @@ public class GroupListFragment extends Fragment {
 
         //GUI 구성을 보이기 위한 arraylist로, db 구축 후 적절한 코드로 대체해주세요
         //list에 add한 정보들이 화면상에 뜨게 되는 구조입니다
+        /*
+        ArrayList<Group> list = getUserGroup(userID);
+        (아래 코드 지워주세요)
+        }
+        * */
         ArrayList<Group> list = new ArrayList<Group>();
         ArrayList<String> memlist = new ArrayList<String>();
         memlist.add("함형우");

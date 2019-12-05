@@ -39,6 +39,10 @@ public class GroupScheduleList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_schedule_list);
+        /*
+        ArrayList<GroupSchedule> meetingsList = getGroupSchedule(groupName);
+        아래 코드 나중에 지워주세요
+        * */
         ArrayList<GroupSchedule> meetingsList = new ArrayList<>();
         //choicedTimeRank와 choicedLocationRank가 -1일 때, 아직 추천을 안 받았다고 가정
         meetingsList.add(new GroupSchedule("4조","융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.11.20", "15:00", "16:00", 1, 1));

@@ -65,6 +65,10 @@ public class PersonalScheduleList extends Fragment {
         View root = inflater.inflate(R.layout.personal_schedule_list, container, false);
 
         //GUI가 어떻게 구성되는지 보여주기 위한 arraylist로, DB 구축 후 지우고 사용해주세요
+        /*
+        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(user);
+        (아래 코드 지우기)
+        * */
         ArrayList<PersonalSchedule> eventsList = new ArrayList<>();
         PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.11.20", "12:00", "13:00");
         eventsList.add(event1);

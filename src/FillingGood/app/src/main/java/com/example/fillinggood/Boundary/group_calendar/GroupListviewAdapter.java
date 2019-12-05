@@ -102,9 +102,11 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //if 모임장 아니면
-                //Toast.makeText(context, "모임장만 접근이 가능합니다", Toast.LENGTH_SHORT).show();
+                /*if (getGroupLeader(list.get(position).getName())!=userID) {
+                    Toast.makeText(context, "모임장만 접근이 가능합니다", Toast.LENGTH_SHORT).show();
+                }*/
 
-                //else, 아래
+                //else, 아래 전체 수행
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("모임 삭제")        // 제목 설정
                         .setMessage("해당 모임을 삭제하겠습니까?")        // 메세지 설정

@@ -55,8 +55,8 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
     }
     @Override
     public int getItemViewType(int position) {
-        //아직 추천을 안받은 경우
-        //if (groupScheduleList.getRecommending()==null)
+        //아직 추천을 안받은 경우(추천 생성 안 되어있거나(모임장), 생성은 돼 있으나 로그인한 멤버가 추천 투표 안한 경우(비모임장))
+        //if (groupScheduleList.get(position).getRecommending()==null || groupScheduleList.get(position).getChoicedTime()==null)
         if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
             return 1;
         //추천을 이미 받은 경우
@@ -102,7 +102,8 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
                     public void onClick(View v) {
                         //if 해당 회원의 모임내 역할이 리더가 아니고, 리더가 추천을 아직 받지 않은 경우,
                         //리더가 추천을 아직 받지 않았다는 메세지 띄우고 접근 제한
-                        //Toast.makeText(context, "리더가 아직 추천 생성을 하지 않았습니다.", Toast.LENGTH_LONG).show();
+                        /*if (getGroupLeader(gs.getGroupName)!=userID && groupScheduleList.get(position).getRecommending()==null)
+                        Toast.makeText(context, "모임장이 아직 추천 생성을 하지 않았습니다.", Toast.LENGTH_LONG).show();*/
 
                         //else일 경우, 아래 activity class로 이동
                         //(else 일 때 case1: 리더이다(프리패스), case2: 리더는 아니지만 리더가 추천생성을 해둔 상태(조건부 패스))

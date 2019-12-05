@@ -19,16 +19,27 @@ public class MarkingDots{
 
         //GUI 구성을 보이기 위한 array로, DB 구축 후 적절한 코드로 대체해주세요
         //개인 회원이 가진 모든 일정 날짜 여기서 가져온 후, dates array-list에 추가
-        String[] datesHavingEvents = new String[3];
-        datesHavingEvents[0] = new String("2019.11.20");
-        datesHavingEvents[1] = new String("2019.11.22");
-        datesHavingEvents[2] = new String("2019.11.27");
+
+        ArrayList<String> datesHavingEvents = new ArrayList<>();
+        /*
+        ArrayList<PersonalSchedule> ps = getPersonalSchedule(user);
+        Iterator iter = ps.iterator();
+        while (iter.hasNext()){
+            ps = iter.next();
+            String date = ps.getDate();
+            datesHavingEvents.add(date);
+        }
+        (아래 임시 데이터 지우기)
+        */
+        datesHavingEvents.add("2019.11.20");
+        datesHavingEvents.add("2019.11.22");
+        datesHavingEvents.add("2019.11.27");
 
         ArrayList<CalendarDay> dates = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         //일정을 가진 날짜에 점 표시해주는 파트
-        for (int i=0; i<datesHavingEvents.length; i++){
-            String s = datesHavingEvents[i];
+        for (int i=0; i<datesHavingEvents.size(); i++){
+            String s = datesHavingEvents.get(i);
             int year = Integer.parseInt(s.substring(0,4));
             int month = Integer.parseInt(s.substring(5,7));
             int day = Integer.parseInt(s.substring(8,10));

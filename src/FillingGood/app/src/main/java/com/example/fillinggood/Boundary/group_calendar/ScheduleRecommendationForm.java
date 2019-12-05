@@ -26,7 +26,17 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        /*
+        ArrayList<String> list = new ArrayLIst<>()에 "0000.00.00" 형태로 추천 리스트를 받아온다는 가정하에, 달력 생성 코드 적어둡니다
+        Calendar startTime;
+        Calendar endTime;
 
+        Iterator<String> iter = list.iterator();
+        while (iter.hasNext()){
+            String s = iter.next();
+            String[] temp =
+        }
+        * */
         Calendar startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 15);
         startTime.set(Calendar.MINUTE, 0);
