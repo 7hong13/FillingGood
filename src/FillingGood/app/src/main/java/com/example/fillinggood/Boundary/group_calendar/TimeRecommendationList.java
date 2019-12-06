@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -53,8 +54,11 @@ public class TimeRecommendationList extends Fragment {
             @Override
             public void onClick(View v) {
                 //결과 저장하는 코드를 작성해주세요
-
-                //if 추천순위 미선택,  Toast.makeText(getContext(), “선택된 시간이 없습니다", Toast.LENGTH_SHORT).show();
+                if (rank1.isChecked()==false && rank2.isChecked()==false && rank3.isChecked()==false && rank4.isChecked()==false &&rank5.isChecked()==false )
+                {
+                    Toast.makeText(getContext(), "선택된 시간이 없습니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 //else, 장소 추천 목록을 보여주는 fragment 호출
                 showLocationRecommendation();
