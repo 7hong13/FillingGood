@@ -111,15 +111,16 @@
 
                 <Button
                     android:id="@+id/saveResult"
-                    android:layout_marginTop="20dp"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="220dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/rounded_button"
+                    android:onClick="onClick"
                     android:text="등록"
                     android:textColor="#ffffff"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 </LinearLayout>
