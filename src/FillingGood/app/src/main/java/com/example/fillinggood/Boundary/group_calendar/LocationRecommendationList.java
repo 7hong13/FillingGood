@@ -53,7 +53,11 @@ public class LocationRecommendationList extends Fragment{
             public void onClick(View v) {
                 //결과 저장하는 코드
 
-                //if 추천순위 미선택,  Toast.makeText(getContext(), “선택된 장소가 없습니다", Toast.LENGTH_SHORT).show();
+                if (rank1.isChecked()==false && rank2.isChecked()==false && rank3.isChecked()==false && rank4.isChecked()==false &&rank5.isChecked()==false )
+                {
+                    Toast.makeText(getContext(), "선택된 장소가 없습니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 //else, 아래 코드 실행
                 getActivity().onBackPressed();

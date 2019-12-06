@@ -85,7 +85,7 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
                 holder.time = (TextView) view.findViewById(R.id.time);
                 holder.name.setText("모임 일정명 : " + gs.getName());
                 holder.location.setText("장소 : " + gs.getLocation());
-                holder.time.setText("시간 : " + gs.getStartTime() + "~" + gs.getEndTime());
+                holder.time.setText("시간 : " +gs.getDate() + " " + gs.getStartTime() + "~" + gs.getEndTime());
             } else {
                 // 추천 아직 안 받은 경우
                 view = vi.inflate(R.layout.group_schedule_listview2, null);
