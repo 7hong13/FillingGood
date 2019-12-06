@@ -88,9 +88,10 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //해당 버튼을 누를시, 그룹 정보를 수정하는 class로 이동합니다
-                /*Intent intent = new Intent(v.getContext(), GroupModificationForm.class);
-                intent.putExtra("groupInfo", list.get(position));
-                context.startActivity(intent);*/
+                /*if (!getGroupLeader(list.get(position).getName()).equals(userID)) {
+                    Toast.makeText(context, "모임장만 접근이 가능합니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
                 if(mListener != null) {
                     mListener.onChangeClick(position);
                 }
