@@ -64,9 +64,10 @@ public class GroupFeedbackList extends Fragment {
             ArrayList<GroupSchedule> meetingsList = new ArrayList<>();
             // ArrayList<GroupSchedule> meetingsList = getGroupSchedule(groupName);
             //아래 코드들 나중에 지워주세요
-            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.12.2", "15:00", "16:00", 1, 1));
-            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "K관", "발표 준비", "2019.12.3", "20:00", "21:00", -1, -1));
-            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "신촌", "아이디어 상의", "2019.12.10", "12:00", "13:30", 0, 0));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.11.20", "15:00", "16:00", 1, 1));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "K관", "발표 준비", "2019.11.20", "20:00", "21:00", -1, -1));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "J관", "유스케이스 스펙 작성 토의", "2019.11.21", "15:00", "16:00", -1, -1));
+            meetingsList.add(new GroupSchedule("4조", "융종설 모임", "신촌", "아이디어 상의", "2019.11.27", "12:00", "13:30", 0, 0));
 
             //날짜별 일정을 시간 오름차순으로 정렬
             Collections.sort(meetingsList, myComparator);

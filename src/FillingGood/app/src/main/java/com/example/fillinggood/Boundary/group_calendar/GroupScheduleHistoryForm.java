@@ -64,9 +64,9 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
             if (Date>=today), datesUpcoming.add(CalendarDay.from(year, month-1, day));
         }
         * */
-        datesPassed.add(CalendarDay.from(2019, 11, 2));
-        datesPassed.add(CalendarDay.from(2019, 11, 3));
-        datesUpcoming.add(CalendarDay.from(2019, 11, 10));
+        datesPassed.add(CalendarDay.from(2019, 10, 20));
+        datesPassed.add(CalendarDay.from(2019, 10, 21));
+        datesUpcoming.add(CalendarDay.from(2019, 10, 27));
 
         //일정을 가진 날짜에 점 찍는 함수
         materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#808080"), datesPassed));
