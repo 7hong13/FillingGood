@@ -62,15 +62,18 @@ public class HomeFragment extends Fragment {
 
         ArrayList<CalendarDay> datesHavingMeetings = new ArrayList<>();
         ArrayList<Group> groups = Group.getAllUsersGroup(MainActivity.User.getID());
+        int year, month, day;
         for (int i=0; i<groups.size(); i++){
             ArrayList<GroupSchedule> gs = GroupSchedule.getGroupSchedule(groups.get(i).getName());
+            if(gs == null)
+                continue;
             Iterator<GroupSchedule> iter = gs.iterator();
             while (iter.hasNext()){
                 GroupSchedule g = iter.next();
                 String date = g.getDate();
-                int year = Integer.parseInt(date.split(".")[0]);
-                int month = Integer.parseInt(date.split(".")[1]);
-                int day = Integer.parseInt(date.split(".")[2]);
+                year = Integer.parseInt(date.substring(0,4));
+                month = Integer.parseInt(date.substring(5,7));
+                day = Integer.parseInt(date.substring(8));
                 datesHavingMeetings.add(CalendarDay.from(year, month-1, day));
             }
         }

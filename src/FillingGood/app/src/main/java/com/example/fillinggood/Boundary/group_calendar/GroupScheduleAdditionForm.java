@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -16,7 +17,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleModificationForm;
+import com.example.fillinggood.Control.RecommendationController;
 import com.example.fillinggood.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -30,9 +33,14 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener startDateSetListener, endDateSetListener;
     private Button saveSchedule;
 
+    private String groupName, Name;
+    private int expectTime;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_group_schedule);
+
+        groupName = getIntent().getStringExtra("groupName");
 
         name = (EditText)findViewById(R.id.name);
         description = (EditText)findViewById(R.id.description);
@@ -43,6 +51,8 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
 
         setNull = (RadioButton)findViewById(R.id.setNull);
         setDuration = (RadioButton)findViewById(R.id.setDuration);
+
+        expectedTime = (EditText)findViewById(R.id.expectedTime);
 
         saveSchedule = (Button)findViewById(R.id.save_schedule);
 
@@ -68,7 +78,16 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
             startDateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    String date = (year) + "." + (month+1) + "." + dayOfMonth;
+                    String Month, Day;
+                    if((month+1)/10 < 1)
+                        Month = "0" + (month+1);
+                    else
+                        Month = ""+(month+1);
+                    if(dayOfMonth/10 < 1)
+                        Day = "0" + dayOfMonth;
+                    else
+                        Day = ""+dayOfMonth;
+                    String date = (year) + "." + Month + "." + Day;
                     startDate.setText(date);
                 }
             };
@@ -94,11 +113,21 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
             endDateSetListener = new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                    String date = (year) + "." + (month+1) + "." + dayOfMonth;
+                    String Month, Day;
+                    if((month+1)/10 < 1)
+                        Month = "0" + (month+1);
+                    else
+                        Month = ""+(month+1);
+                    if(dayOfMonth/10 < 1)
+                        Day = "0" + dayOfMonth;
+                    else
+                        Day = ""+dayOfMonth;
+                    String date = (year) + "." + Month + "." + Day;
                     endDate.setText(date);
                 }
             };
 
+            RecommendationController.saveGroupSEperiod(groupName, startDate.getText().toString(), endDate.getText().toString());
 
         }
 
@@ -113,8 +142,16 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
                             // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
                             public void onClick(DialogInterface dialog, int whichButton){
                                 //원하는 클릭 이벤트를 넣으시면 됩니다.
-                                onBackPressed();
-                                Toast.makeText(GroupScheduleAdditionForm.this, "일정이 등록되었습니다", Toast.LENGTH_SHORT).show();
+
+                                if(DBmanager.getInstance().FindRecommending(groupName)){
+                                    Toast.makeText(GroupScheduleAdditionForm.this, "이미 추천 중인 일정이 있습니다", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Name = name.getText().toString();
+                                    expectTime = Integer.parseInt(expectedTime.getText().toString());
+                                    RecommendationController.additionSaveRecommending(groupName, Name, expectTime);
+                                    onBackPressed();
+                                    Toast.makeText(GroupScheduleAdditionForm.this, "일정이 등록되었습니다", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener(){

@@ -3,6 +3,7 @@ package com.example.fillinggood.Entity;
 import android.util.Log;
 
 import com.example.fillinggood.Boundary.DBboundary.DBmanager;
+import com.example.fillinggood.Boundary.home.MainActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,6 +46,25 @@ public class GroupSchedule extends Schedule {
     public void setChoicedLocationRank(int choicedLocationRank){this.choicedLocationRank = choicedLocationRank;}
 
     public ArrayList<Feed> getFeeds(){return this.Feeds;}
+
+    public static void additionsaveRecommending(String groupName, String name, int ExpectTime){
+        ArrayList<GroupMember> groupMembers = DBmanager.getInstance().getGroupMember(groupName);
+        GroupMember leader = DBmanager.getInstance().getGroupLeader(groupName);
+        DBmanager.getInstance().saveAdditionRecommending(groupName, leader.getID(), name, ExpectTime);
+        for(int i = 0; i < groupMembers.size(); i++){
+            DBmanager.getInstance().saveAdditionRecommending(groupName, groupMembers.get(i).getID(), name, ExpectTime);
+        }
+    }
+    public static void saveTimeChoiceRecommending(String groupName, String userID, int rank){
+        DBmanager.getInstance().saveTimeChoiceRecommending(groupName, userID, rank);
+    }
+    public static void saveLocChoiceRecommending(String groupName, String userID, int rank){
+        DBmanager.getInstance().saveLocChoiceRecommending(groupName, userID, rank);
+    }
+    public static String[] getRT(String groupName){
+        String[] rt = DBmanager.getInstance().getTimeRecommending(groupName, MainActivity.User.getID());
+        return rt;
+    }
 
     // [시간추천]
     // 그룹 일정 생성
@@ -123,6 +143,10 @@ public class GroupSchedule extends Schedule {
         }
 
         double[][] temp = g.getGroupTimeTable();
+        if(temp == null){
+            g.getTimeTable(g.getName());
+            temp = g.getGroupTimeTable();
+        }
         // 시간대 가중치 곱하기
         for (int i = 0; i < 7; i++) {
             for (int j = 0; j < 96; j++) {
@@ -134,7 +158,7 @@ public class GroupSchedule extends Schedule {
         return GS;
     }
     // 일정 추천 함수 : startTime으로 월요일 날짜가 들어와 해당 주의 월-일 일주일간의 일정 추천
-    public static String[] RecommendSchedule(double[][] gs, int min, String startTime){
+    public static String[] RecommendSchedule(double[][] gs, int min, String startTime, String groupName){
         double[][] schedule = gs;
         double[] temp = new double[schedule.length * schedule[0].length];
 
@@ -250,6 +274,19 @@ public class GroupSchedule extends Schedule {
             recommend_date[i] = date.format(cal.getTime()) + " ~ " + date.format(cal2.getTime());
             // 2019.11.23 10:30 ~ 2019.11.24 12:00 와 같은 형식의 String이 추가됨
         }
+        // 해당 string 정보를 save
+        String DATE, START, END;
+        ArrayList<GroupMember> members = DBmanager.getInstance().getGroupMember(groupName);
+        for(int i = 0; i < recommend_date.length; i++){
+            DATE = recommend_date[i].substring(0, 10);
+            START = recommend_date[i].substring(11, 16);
+            END = recommend_date[i].substring(30);
+            for(int j = 0; j < members.size(); j++){
+                DBmanager.getInstance().saveTimeRecommending(groupName, members.get(j).getID(), i+1, DATE, START, END );
+            }
+            DBmanager.getInstance().saveTimeRecommending(groupName, DBmanager.getInstance().getGroupLeader(groupName).getID(),i+1, DATE, START, END);
+        }
+
         return recommend_date;
     }
 
@@ -316,10 +353,36 @@ public class GroupSchedule extends Schedule {
         return result;
     }
 
+    public static void makeGsch(String groupName, String rt, int timerank, int locrank, String name, String loc){
+        Log.d("check", "start Entity makeGsch");
+        String Date = rt.substring(0,10);
+        String Start = rt.substring(12, 16);
+        String End = rt.substring(30);
+        GroupSchedule Recomed = new GroupSchedule();
+        Recomed.date = Date;
+        Recomed.startTime = Start;
+        Recomed.endTime = End;
+        Recomed.choicedTimeRank = timerank;
+        Recomed.choicedLocationRank = locrank;
+        Recomed.name = name;
+        Recomed.location = loc.replace(" ", "");
+        ArrayList<GroupSchedule> groupSchedules = DBmanager.getInstance().getGroupSchedule(groupName);
+        if(groupSchedules == null)
+            groupSchedules = new ArrayList<>();
+        groupSchedules.add(Recomed);
+        DBmanager.getInstance().saveGroupSchedule(DBmanager.getInstance().getGroupInfo(groupName), groupSchedules);
+        Log.d("check", "save");
+        // Del Recommending
+        DBmanager.getInstance().DelRecommending(groupName);
+    }
+
     // Feedback
     // Add Update Del Feeds
     public static ArrayList<GroupSchedule> getGroupSchedule(String groupName){
         ArrayList<GroupSchedule> groupSchedules = DBmanager.getInstance().getGroupSchedule(groupName);
+        if(groupSchedules == null){
+            return new ArrayList<>();
+        }
         for(int i = 0; i < groupSchedules.size(); i++){
             GroupSchedule g = groupSchedules.get(i);
             g.Feeds = DBmanager.getInstance().getFeeds(g.groupName, g.date, g.startTime);
@@ -357,28 +420,7 @@ public class GroupSchedule extends Schedule {
     // groupMember 구해서 일정 구하기.
     // 특정 member가 작성한다는 정보가 필요함.
     public static void ReAdjustment() {
-        ArrayList<PersonalSchedule> pschs;
-        String action = "좋음/나쁨"; // 얘 받아와야함.
-/*
-        // 시간 조정
-        for(int i = 0; i < pschs.size();i++){
-            if(isOverlap(pschs.get(i), this)) {
-                if (action.equals("좋음"))
-                    return;
-                else if (action.equals("나쁨"))
-                    return;
-            }
-            else{
-                if(action.equals("좋음"))
-                    return;
-                else if(action.equals("나쁨"))
-                    return;
-            }
-        }
-*/
-        // 장소 조정
 
-        // DB에 저장
     }
 
     public static class Feed {

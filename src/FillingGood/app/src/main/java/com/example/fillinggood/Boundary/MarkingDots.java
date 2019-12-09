@@ -30,6 +30,8 @@ public class MarkingDots{
         ArrayList<String> datesHavingEvents = new ArrayList<>();
 
         ArrayList<PersonalSchedule> ps = personalScheduleController.getAllPS(MainActivity.User.getID());
+        if(ps == null)
+            ps = new ArrayList<>();
         Iterator<PersonalSchedule> iter = ps.iterator();
         while (iter.hasNext()){
             PersonalSchedule p = iter.next();

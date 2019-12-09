@@ -15,6 +15,7 @@ import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleList;
+import com.example.fillinggood.Control.GroupManagementController;
 import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -56,7 +57,7 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
 
         /*이미 지난 일정인지, 다가오는 일정인지 체크하는 파트*/
 
-        ArrayList<GroupSchedule> gs = DBmanager.getInstance().getGroupSchedule(groupName);
+        ArrayList<GroupSchedule> gs = GroupManagementController.getGroupSchedule(groupName);
         if(gs.size() < 1)
             gs = new ArrayList<>();
         Iterator<GroupSchedule> iter = gs.iterator();

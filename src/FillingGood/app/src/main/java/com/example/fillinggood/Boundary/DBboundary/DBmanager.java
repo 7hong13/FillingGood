@@ -9,7 +9,6 @@ import com.example.fillinggood.Entity.GroupMember;
 import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.Entity.Schedule;
-import com.example.fillinggood.Entity.TimeTable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -203,6 +202,8 @@ public class DBmanager extends AppCompatActivity {
 
         return temp;
     }
+    // 특정 Group의 일정 생성 시작 날짜와 끝 날짜를 받아옴
+
     // 특정 그룹의 기본정보 + 구성원 정보 저장
     public void saveGroupInfoMember(Group group){
         String url = query + "SelGroup.php?name=" + group.getName();
@@ -261,6 +262,17 @@ public class DBmanager extends AppCompatActivity {
             if(!temp.equals("update"))
                 Log.d("ERROR", "GroupInfo update fail");
         }
+    }
+    // 특정 그룹의 일정 생성 시작 날짜와 끝 날짜를 저장
+    public void saveGroupSEperiod(String groupName, String startPeriod, String endPeriod){
+        String start = startPeriod.replace(".", "");
+        String end = startPeriod.replace(".", "");
+        String url = query + "UpdateGroupSEperiod.php?name=" + groupName + "&start=" + start + "&end=" + end;
+        String temp = getData(url);
+        if(temp.equals("update"))
+            return;
+        else
+            Log.d("ERROR", "SEperiod update fail");
     }
 
     // 특정 Group의 구성원 정보를 받아옴
@@ -404,13 +416,13 @@ public class DBmanager extends AppCompatActivity {
         for(int i = 0; i < gsch.length; i++){
             String[] temps = gsch[i].split("#");
             GroupSchedule tempgs = new GroupSchedule();
-            tempgs.setName(temps[0]);
             String Date = temps[0].replace("-", ".");
             tempgs.setDate(Date);
             String start = temps[1].substring(0,5);
             tempgs.setStartTime(start);
             String end = temps[2].substring(0,5);
             tempgs.setEndTime(end);
+            tempgs.setName(temps[3]);
             tempgs.setDescription(temps[4]);
             tempgs.setLocation(temps[5]);
             if(temps.length > 6)
@@ -428,16 +440,26 @@ public class DBmanager extends AppCompatActivity {
         String url = query + "DelAllPersonalSch.php?name=" + groupName;
         String temp = getData(url);
 
+        String date, start, end;
+
         for(int i = 0; i < gschs.size(); i++){
             GroupSchedule tempgs = gschs.get(i);
-            url = query + "InsertGroupSch.php?gname=" + groupName + "&date=" + tempgs.getDate() + "&start=" + tempgs.getStartTime()
-                    + "&end=" + tempgs.getEndTime() + "&name=" + tempgs.getName() + "&descrip=" + tempgs.getDescription()
+            date = tempgs.getDate().replace(".", "");
+            start = tempgs.getStartTime().replace(":", "") + "00";
+            if(start.length() < 6)
+                start = "0" + start;
+            end = tempgs.getEndTime().replace(":", "") + "00";
+            if(end.length() < 6)
+                end = "0" + end;
+            url = query + "InsertGroupSch.php?gname=" + groupName + "&date=" + date + "&start=" + start
+                    + "&end=" + end + "&name=" + tempgs.getName() + "&descrip=" + tempgs.getDescription()
                     + "&loc=" + tempgs.getLocation();
             if(tempgs.getChoicedTimeRank() > 0)
                 url += "&trank=" + tempgs.getChoicedTimeRank();
             if(tempgs.getChoicedLocationRank() > 0)
                 url += "&lrank=" + tempgs.getChoicedLocationRank();
             temp = getData(url);
+            Log.d("check", ""+temp);
             if(temp.equals("insert"))
                 return;
             else
@@ -547,26 +569,86 @@ public class DBmanager extends AppCompatActivity {
         Log.d("check", "" + temp);
     }
 
-    // 특정 그룹의 timetable 받아옴
-    public TimeTable[] getTimeTable(String groupName){
-        TimeTable[] tt = new TimeTable[7];
+    // 특정 그룹의 이미 만들어진 timetable이 있는지 확인
+    public boolean findTT(String groupName){
+        String url = query + "FindTT.php?gname=" + groupName;
+
+        String result = getData(url);
+        if(result.equals("결과 없음")) // 만들어진 time table 없음
+            return false;
+        else
+            return true;
+    }
+
+    // 특정 그룹의 시간대 가중치 받아옴
+    public double[][] getTimeTable(String groupName){
+        double[][] timetable = new double[7][96];
         String url = query + "SelTT.php?gname=" + groupName;
 
         String result = getData(url);
         if(result.equals("결과 없음"))
             return null;
         String[] temp = result.split("<br>");
+        int day, time;
         for (int i = 0; i < temp.length; i++){
             String[] temps = temp[i].split("#");
             // temptt day 판별 > time, value 값 넣기
+            // temps[0] : day
+            // temps[1] : time index
+            // temps[2] : value
+            switch (temps[0]){
+                case "mon" : day = 0; break;
+                case "tue" : day = 1; break;
+                case "wed" : day = 2; break;
+                case "thu" : day = 3; break;
+                case "fri" : day = 4; break;
+                case "sat" : day = 5; break;
+                case "sun" : day = 6; break;
+                default: day = -1; break;
+            }
+            time = Integer.parseInt(temps[1]);
+            timetable[day][time] = Double.parseDouble(temps[2]);
         }
 
-        return tt;
+        return timetable;
     }
     // 특정 그룹의 timetable 저장
-    public void saveTimeTable(Group group){
+    public void saveTimeTable(String groupName, double[][] timetable){
         // index > day 변환, time, value랑 같이 저장
+        String url = query + "FindTT.php?gname=" + groupName;
 
+        String result = getData(url);
+        String day;
+        String suburl;
+        if(result.equals("결과 없음")){
+            url = query + "InsertTT.php?gname=" + groupName;
+        }
+        else{
+            url = query + "UpdateTT.php?gname=" + groupName;
+        }
+        Log.d("check", "" + url);
+        int count = 0;
+        for(int i = 0; i < 7; i++){
+            switch (i){
+                case 0 : day = "mon"; break;
+                case 1 : day = "tue"; break;
+                case 2 : day = "wed"; break;
+                case 3 : day = "thu"; break;
+                case 4 : day = "fri"; break;
+                case 5 : day = "sat"; break;
+                case 6 : day = "sun"; break;
+                default: day = ""; break;
+            }
+            Log.d("check", "" + day);
+            for(int j = 0; j < 96; j++){
+                suburl = url + "&day=" + day + "&time=" + j + "&value=" + timetable[i][j];
+                result = getData(suburl);
+                if(!result.equals("insert") || !result.equals("update")){
+                    Log.d("check", "" + result);
+                }
+                count++;
+            }
+        }
     }
     // 특정 그룹의 특정 시간대 가중치 정보 저장
     public void saveSpecificTimeTable(Group group, String day, String time, int value){
@@ -582,11 +664,149 @@ public class DBmanager extends AppCompatActivity {
             Log.d("ERROR", "TimeTable insert fail");
     }
 
+
     // 특정 그룹의 Recommended 받아옴(필요?)
     // 특정 그룹의 Recommended 저장
 
+    // 특정 그룹의 Recommending 찾기
+    public boolean FindRecommending(String groupName){
+        String url = query + "FindTimeRecing.php?gname=" + groupName;
+        String result = getData(url);
+        if(result.equals("결과 없음")) // 추천 중인 일정 없음
+            return false;
+        else // 추천 중인 일정 있음
+            return true;
+    }
+    public String FindRecommendingName(String groupName){
+        String url = query + "SelReingName.php?gname=" + groupName;
+        String result = getData(url);
+        return result;
+    }
+    public boolean FindRecommendingTime(String groupName){
+        String url = query + "FindRecingTime.php?gname=" + groupName;
+        String result = getData(url).replace("<br>", "");
+        Log.d("check", "" + result);
+        if(result.equals("생성되지 않음")) // 추천 중인 시간대 없음
+            return false;
+        else // 추천 중인 일정 있음
+            return true;
+    }
+    public boolean FindRecommendingLoc(String groupName){
+        String url = query + "FindRecingLoc.php?gname=" + groupName;
+        String result = getData(url);
+        if(result.equals("생성되지 않음")) // 추천 중인 시간대 없음
+            return false;
+        else // 추천 중인 일정 있음
+            return true;
+    }
+    public int getExpectTime(String groupName){
+        String url = query + "getExpectTime.php?gname=" + groupName;
+        String result = getData(url).replace("<br>", "");
+        int expect = Integer.parseInt(result);
+        return expect;
+    }
     // 특정 그룹의 Recommending 받아옴
-    // 특정 그룹의 Recommending 저장
+    public String[] getTimeRecommending(String groupName, String userID){
+        String[] rt = new String[5];
+        String url = query + "SelTimeRecing.php?gname=" + groupName + "&id=" + userID;
+
+        String result = getData(url);
+        if(result.equals("결과 없음"))
+            return null;
+        String[] temps = result.split("<br>");
+        String rtt;
+        int rank;
+        String Date, Start, End;
+        for(int i = 0; i < 5; i++){
+            String[] tempss = temps[i].split("#");
+            rank = Integer.parseInt(tempss[0])-1;
+            Date = tempss[1].replace("-", ".");
+            Start = tempss[2].substring(0,5);
+            End = tempss[3].substring(0,5);
+            rtt = Date + " " + Start + " ~ " + Date + " " + End;
+            rt[rank] = rtt;
+        }
+
+        return rt;
+    }
+    // 특정 그룹의 Recommending 초기 저장
+    public void saveAdditionRecommending(String groupName, String userID, String name, int expectedTime){
+        String url = query + "InsertAddRing.php?gname=" + groupName + "&id=" + userID + "&name=" + name + "&time=" + expectedTime;
+        String suburl;
+        String temp;
+        for(int i = 1; i <= 5; i++){
+            suburl = url + "&rank=" + i;
+            temp = getData(suburl);
+            if(!temp.equals("insert"))
+                Log.d("check", "" + temp);
+        }
+    }
+    // 특정 그룹의 Recommending(time) 저장
+    public void saveTimeRecommending(String groupName, String userID, int rank, String date, String starTime, String endTime){
+        String name;
+        int expectTime;
+        String url = query + "SelNameExpect.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank;
+        String result = getData(url);
+        result.replace("<br>", "");
+        String[] temp = result.split("#");
+        expectTime = Integer.parseInt(temp[0]);
+        name = temp[1];
+
+        url = query + "DelTimeRankRecomming.php?name=" + groupName + "&id=" + userID + "&rank=" + rank;
+        result = getData(url);
+
+        String Date = date.replace(".", "");
+        String start = starTime.replace(":", "").replace(" ","") + "00";
+        String end = endTime.replace(":", "").replace(" ","") + "00";
+        url = query + "InsertTimeRing.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank + "&date=" + Date
+                + "&start=" + start + "&end=" + end + "&name=" + name + "&time=" + expectTime;
+
+        result = getData(url);
+        if(result.equals("update"))
+            return;
+        else
+            Log.d("ERROR", "TimeRecing insert fail");
+    }
+    public void saveTimeChoiceRecommending(String groupName, String userID, int rank){
+        String url = query + "UpdateTimeChoiceRecing.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank;
+        String temp = getData(url);
+        if(temp.equals("update"))
+            return;
+        else
+            Log.d("ERROR", "TimeChoice update fail");
+    }
+    public void saveTimeChoice(String groupName, String userID, int rank){
+        String url = query + "InsertTimeSelect.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank;
+        String result = getData(url);
+        if(result.equals("insert"))
+            return;
+        else
+            Log.d("ERROR", "Choicetime insert fail");
+    }
+    // 특정 그룹의 Recommending(lco) 저장
+    public void saveLocRecommending(String groupName, String userID, int rank, String location){
+        String url = query + "InsertLocRecom.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank + "&loc=" + location;
+        String result = getData(url);
+        if(result.equals("insert"))
+            return;
+        else
+            Log.d("ERROR", "Loc insert fail");
+    }
+    public void saveLocChoiceRecommending(String groupName, String userID, int rank){
+        String url = query + "UpdateLocChoiceRecing.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank;
+        String temp = getData(url);
+        if(temp.equals("update"))
+            return;
+        else
+            Log.d("ERROR", "LocChoice update fail");
+    }
+
+    public void DelRecommending(String groupName){
+        String url = query + "DelTimeRecomming.php?gname=" + groupName;
+        String result = getData(url);
+        url = query + "DelLocRecomming.php?gname=" + groupName;
+        result = getData(url);
+    }
 
     public void delGroup(String groupName){
         String url = query + "DelGroupInfo.php?name=" + groupName;

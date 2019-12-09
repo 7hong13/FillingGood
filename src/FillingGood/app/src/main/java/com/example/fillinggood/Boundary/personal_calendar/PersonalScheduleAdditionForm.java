@@ -201,11 +201,8 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
                 //시간대가 타 일정과 중복될 경우(시작시간과 끝시간이 완전히 일치하는 경우만 고려했습니다...test date set도 맞춰서 작성할게요..)
                 PersonalSchedule thisSch = new PersonalSchedule();
                 thisSch.setDate(mDateTextView.getText().toString());
-                Log.d("check", ""+ thisSch.getDate());
                 thisSch.setStartTime(mStartTimeTextView.getText().toString());
-                Log.d("check", ""+ thisSch.getStartTime());
                 thisSch.setEndTime(mEndTimeTextView.getText().toString());
-                Log.d("check", ""+ thisSch.getEndTime());
 
                 boolean overlap_check = false;
                 ArrayList<PersonalSchedule> myps = personalScheduleController.getAllPS(MainActivity.User.getID());

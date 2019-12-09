@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,37 +46,44 @@ import java.util.Set;
 //날짜를 선택할시, 해당 날짜에 등록된 일정들을 list-up하는 class 입니다
 public class PersonalScheduleList extends Fragment {
     PersonalScheduleController personalScheduleController = new PersonalScheduleController();
+    ArrayList<PersonalSchedule> eventsList;
+    ArrayList<String> eventsForSelectedDay;
 
     private String date;
+
     public PersonalScheduleList() {
         // Required empty public constructor
     }
+
     public PersonalScheduleList(String date) {
         // Required empty public constructor
         this.date = date;
     }
 
     //날짜별 일정들 시간순대로 정렬하는 함수
-    private final static Comparator<PersonalSchedule> myComparator= new Comparator<PersonalSchedule>() {
+    private final static Comparator<PersonalSchedule> myComparator = new Comparator<PersonalSchedule>() {
         private final Collator collator = Collator.getInstance();
+
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        public int compare(PersonalSchedule object1,PersonalSchedule object2) {
-            return  collator.compare(object1.getStartTime(), object2.getStartTime());
+        public int compare(PersonalSchedule object1, PersonalSchedule object2) {
+            return collator.compare(object1.getStartTime(), object2.getStartTime());
         }
     };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
+                             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.personal_schedule_list, container, false);
 
-        ArrayList<PersonalSchedule> eventsList = personalScheduleController.getAllPS(MainActivity.User.getID());
+        eventsList = personalScheduleController.getAllPS(MainActivity.User.getID());
+        if(eventsList == null)
+            eventsList = new ArrayList<>();
 
         //날짜별 일정을 시간 오름차순으로 정렬
         Collections.sort(eventsList, myComparator);
 
-        ArrayList<String> eventsForSelectedDay = new ArrayList<>();
+        eventsForSelectedDay = new ArrayList<>();
 
         Iterator<PersonalSchedule> iter1 = eventsList.iterator(); // iterator(반복자)를 얻는다.
         while (iter1.hasNext()) {
@@ -90,12 +98,16 @@ public class PersonalScheduleList extends Fragment {
         ArrayList<Group> groups = Group.getAllUsersGroup(MainActivity.User.getID());
         for (int i=0; i<groups.size(); i++){
             ArrayList<GroupSchedule> gs = GroupSchedule.getGroupSchedule(groups.get(i).getName());
+            if(gs == null) {
+                gs = new ArrayList<>();
+                continue;
+            }
             Iterator<GroupSchedule> iter = gs.iterator();
             while (iter.hasNext()){
                 GroupSchedule g = iter.next();
                 if (date.equals(g.getDate())){
                     //"일정명 (00:00~00:00)" 형태 string으로 변환
-                    String s = "["+g.getGroupName()+"]"+g.getName()+" ("+g.getStartTime()+"~"+g.getEndTime()+")";
+                    String s = "["+groups.get(i).getName()+"]"+g.getName()+" ("+g.getStartTime()+"~"+g.getEndTime()+")";
                     eventsForSelectedDay.add(s);
                 }
             }
@@ -115,15 +127,15 @@ public class PersonalScheduleList extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent;
                 //일정명 (00:00PM~00:00PM)
-                intent = new Intent(getActivity(),PersonalScheduleModificationForm.class);
-                String s = (String)parent.getItemAtPosition(position);
-                if(s.charAt(0) == '[') return;
+                intent = new Intent(getActivity(), PersonalScheduleModificationForm.class);
+                String s = (String) parent.getItemAtPosition(position);
+                if (s.charAt(0) == '[') return;
                 //if(s.contains("[")) return;
                 int n = s.length();
 
-                intent.putExtra("name", s.substring(0,n-14));
-                intent.putExtra("startTime", s.substring(n-12,n-7));
-                intent.putExtra("endTime", s.substring(n-6,n-1));
+                intent.putExtra("name", s.substring(0, n - 14));
+                intent.putExtra("startTime", s.substring(n - 12, n - 7));
+                intent.putExtra("endTime", s.substring(n - 6, n - 1));
                 intent.putExtra("date", date);
 
                 startActivity(intent);
@@ -132,5 +144,5 @@ public class PersonalScheduleList extends Fragment {
 
         return root;
     }
-}
 
+}

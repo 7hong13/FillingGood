@@ -7,6 +7,7 @@ import com.example.fillinggood.Boundary.DBboundary.DBmanager;
 import com.example.fillinggood.Boundary.group_calendar.GroupListviewAdapter;
 import com.example.fillinggood.Entity.Group;
 import com.example.fillinggood.Entity.GroupMember;
+import com.example.fillinggood.Entity.GroupSchedule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class GroupManagementController {
     }
 
     public int FindGroup(String groupName){
-        ArrayList<String> AllGroupName = DBmanager.getInstance().getAllGroupName();
+        ArrayList<String> AllGroupName = Group.getAllGroupName();
         // All group 뽑아서 해당 groupName 있는지 비교
         for(int i = 0; i < AllGroupName.size(); i++){
             if(AllGroupName.get(i).equals(groupName))
@@ -57,21 +58,16 @@ public class GroupManagementController {
     }
 
     public ArrayList<Group> FindAllUserGroup(String userID){
-        ArrayList<Group> groups = new ArrayList<>();
-
-        groups = DBmanager.getInstance().getUserGroup(userID);
-
-        // 해당 그룹의 멤버 목록 다 가져오기
-        for(int i = 0; i < groups.size(); i++){
-            Group temp = groups.get(i);
-            temp.setGroupMembers(DBmanager.getInstance().getGroupMember(temp.getName()));
-            temp.setGroupLeader(DBmanager.getInstance().getGroupLeader(temp.getName()));
-        }
+        ArrayList<Group> groups = Group.getAllUsersGroup(userID);
         return groups;
     }
     public void saveGroup(String userID, String groupName, String groupDescription, ArrayList<String> members){
         Group.saveGroupInfo(groupName, groupDescription);
         Group.saveGroupMember(groupName, userID, members);
+    }
+
+    public static ArrayList<GroupSchedule> getGroupSchedule(String groupName){
+        return GroupSchedule.getGroupSchedule(groupName);
     }
 
     public void DelGroup(String groupName){

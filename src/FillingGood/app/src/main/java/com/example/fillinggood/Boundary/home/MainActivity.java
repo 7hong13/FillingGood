@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //String userID = intent.getExtras().getString("id");
         String userID = "test1";
+        //userID = "test5";
         User = DBmanager.getInstance().getUser(userID);
 
         //actionbar(상단바) title 가운데로 정렬

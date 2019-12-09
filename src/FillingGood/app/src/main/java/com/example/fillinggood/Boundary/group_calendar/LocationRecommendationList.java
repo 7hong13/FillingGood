@@ -2,6 +2,7 @@ package com.example.fillinggood.Boundary.group_calendar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,12 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
+import com.example.fillinggood.Boundary.home.MainActivity;
 import com.example.fillinggood.Control.RecommendationController;
+import com.example.fillinggood.Entity.Group;
+import com.example.fillinggood.Entity.GroupMember;
+import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
 
 import java.util.ArrayList;
@@ -22,7 +28,23 @@ import java.util.List;
 public class LocationRecommendationList extends Fragment{
     private RadioButton rank1, rank2, rank3, rank4, rank5;
     private Button saveResult;
-    RecommendationController recommendationController;
+    RecommendationController recommendationController = new RecommendationController();
+
+    private String groupName;
+    private Group thisGroup = DBmanager.getInstance().getGroupInfo(groupName);
+    private String rt, name;
+    private double[][] tt;
+    private int timerank, locrank;
+    ArrayList<String> rl = new ArrayList<>();
+
+    public LocationRecommendationList(String groupName, String rt, double[][] tt, int timerank){
+        this.groupName = groupName;
+        this.rt = rt;
+        this.tt = tt;
+        this.timerank = timerank;
+        this.name = DBmanager.getInstance().FindRecommendingName(groupName);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,10 +122,14 @@ public class LocationRecommendationList extends Fragment{
                 "만레사 스터디룸(도서관 스터디룸)", "빈 강의실", "AS관 로비(AS관 5층 공대 휴게실)",
                 "우정관 카페 옆", "정문 스타벅스"};
 
-        //GUI 구성을 보이기 위한 arryalist로 db 구축 후 지우고 사용해주세요
-        ArrayList<String> rl = new ArrayList<>();
-        //ArrayList<String> list = getRecommended().. 이런식으로 작성 필요
 
+        //ArrayList<String> list = getRecommended().. 이런식으로 작성 필요
+/*
+        String[] array = {"1순위장소이름", "2순위장소이름"};
+        HashMap<String, String[]> hash = thisGroup.getLocation_priority();
+        hash.put("3순위장소이름", array);
+        thisGroup.setLocation_priority(hash);
+*/
         // 모임 장소 추천을 처음 받는 경우 => 고빈도 장소 5개 추천
         if (true) {
             rl.add(top_locations[0]);
@@ -122,6 +148,12 @@ public class LocationRecommendationList extends Fragment{
         if (true){
             ArrayList result = recommendationController.top_match(recommend_location, select_location);
             rl = result;
+            ArrayList<GroupMember> members = DBmanager.getInstance().getGroupMember(groupName);
+            for(int i = 0; i < rl.size(); i++){
+                for(int j = 0; j < members.size(); j++){
+                    DBmanager.getInstance().saveLocRecommending(groupName, members.get(j).getID(), i+1, rl.get(i).toString());
+                }
+            }
         }
 
         rank1 = (RadioButton)root.findViewById(R.id.rank1);
@@ -130,11 +162,22 @@ public class LocationRecommendationList extends Fragment{
         rank4 = (RadioButton)root.findViewById(R.id.rank4);
         rank5 = (RadioButton)root.findViewById(R.id.rank5);
 
-        rank1.setText("1순위 : "+rl.get(0));
-        rank2.setText("2순위 : "+rl.get(1));
-        rank3.setText("3순위 : "+rl.get(2));
-        rank4.setText("4순위 : "+rl.get(3));
-        rank5.setText("5순위 : "+rl.get(4));
+        thisGroup = RecommendationController.getGroup(groupName);
+        if (!thisGroup.getGroupLeader().getID().equals(MainActivity.User.getID())){
+            rank1.setText("1순위 : "+rl.get(0));
+            rank2.setText("2순위 : "+rl.get(1));
+            rank3.setText("3순위 : "+rl.get(2));
+            rank4.setText("4순위 : "+rl.get(3));
+            rank5.setText("5순위 : "+rl.get(4));
+        }
+        else {
+            rank1.setText("1순위 : "+rl.get(0));//+"\n(투표한 멤버: "+//해당 투표한 멤버 이름들+")\n");
+            rank2.setText("2순위 : "+rl.get(1));//+"\n(투표한 멤버: "+//해당 투표한 멤버 이름들+")\n");
+            rank3.setText("3순위 : "+rl.get(2));//+"\n(투표한 멤버: "+//해당 투표한 멤버 이름들+")\n");
+            rank4.setText("4순위 : "+rl.get(3));//+"\n(투표한 멤버: "+//해당 투표한 멤버 이름들+")\n");
+            rank5.setText("5순위 : "+rl.get(4));//+"\n(투표한 멤버: "+//해당 투표한 멤버 이름들+")\n");
+        }
+
 
 
         saveResult = (Button)root.findViewById(R.id.save_result);
@@ -144,7 +187,32 @@ public class LocationRecommendationList extends Fragment{
             public void onClick(View v) {
                 //결과 저장하는 코드
 
-                //if 추천순위 미선택,  Toast.makeText(getContext(), “선택된 장소가 없습니다", Toast.LENGTH_SHORT).show();
+                if (!rank1.isChecked() && !rank2.isChecked() && !rank3.isChecked() &&!rank4.isChecked() && !rank5.isChecked()){
+                    Toast.makeText(getContext(), "선택된 장소가 없습니다", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int rank;
+                if(rank1.isChecked())
+                    rank = 1;
+                else if(rank2.isChecked())
+                    rank = 2;
+                else if(rank3.isChecked())
+                    rank = 3;
+                else if(rank4.isChecked())
+                    rank = 4;
+                else if(rank5.isChecked())
+                    rank = 5;
+                else
+                    rank = 1;
+                RecommendationController.saveLocChoiceRecommending(groupName, MainActivity.User.getID(), rank);
+                locrank = rank;
+
+                // 최종적으로 선택한 시간대 가중치 -0.1
+                RecommendationController.Adjustment(thisGroup, rt, tt);
+                //thisGroup.setGroupTimeTable(Group.getFeedTimeTable(rt, tt));
+
+                RecommendationController.makeGsch(groupName, rt, timerank, locrank, name, rl.get(rank-1));
 
                 //else, 아래 코드 실행
                 getActivity().onBackPressed();
