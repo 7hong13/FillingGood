@@ -1,6 +1,7 @@
 package com.example.fillinggood.Boundary.group_calendar;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +16,25 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
+import com.example.fillinggood.Boundary.home.MainActivity;
 import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
 import com.example.fillinggood.Control.FeedbackController;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
 
 public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter {
     private Context context;
+    private String groupName;
     private ArrayList<GroupSchedule> groupScheduleList = new ArrayList<>();
 
     public GroupFeedbackListAdapter() { }
-    public GroupFeedbackListAdapter(ArrayList<GroupSchedule> groupScheduleList, Context context) {
+    public GroupFeedbackListAdapter(String groupName, ArrayList<GroupSchedule> groupScheduleList, Context context) {
+        this.groupName = groupName;
         this.groupScheduleList = groupScheduleList;
         this.context = context;
     }
@@ -54,39 +62,39 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
     @Override
     public int getItemViewType(int position) {
         //모임 일정이 아직 다가오지 않아 피드백 등록이 불가능하다면
-        /*
-        String Date = groupScheduleList.get(position).getDate();
-        int year = Integer.parseInt(Date.substring(0,4)); int month = Integer.parseInt(Date.substring(5,7));
+
+        String Date = groupScheduleList.get(position).getDate().toString();
+        int year = Integer.parseInt(Date.substring(0,4));
+        int month = Integer.parseInt(Date.substring(5,7));
         int day = Integer.parseInt(Date.substring(8,10));
         long date = year*10000 + month*100 + day;
 
-        Calendar todayDate = CalendarDay.today();
+        CalendarDay todayDate = CalendarDay.today();
         long today = todayDate.getYear()*10000 + (todayDate.getMonth()+1)*100 + todayDate.getDay();
-        if (date<=today)
-        */
-        if (groupScheduleList.get(position).getChoicedTimeRank()==0 && groupScheduleList.get(position).getChoicedTimeRank()==0)
+        if (today <= date)
             return 2;
 
-        //아직 피드백을 등록하지 않았다면
-        //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재하지 않을 때
-        /*
-        ArrayList<GroupSchedule.Feed> list = getFeeds(groupScheduleList.get(position));
+            //아직 피드백을 등록하지 않았다면
+            //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재하지 않을 때
+        GroupSchedule gs = groupScheduleList.get(position);
+
+        ArrayList<GroupSchedule.Feed> list = FeedbackController.getFeeds(groupName, gs.getDate(), gs.getStartTime());
+        if(list == null) // 해당 일정에 feedback이 하나도 없음
+            return 0;
         Iterator<GroupSchedule.Feed> iter = list.iterator();
         boolean flag = false;
         while (iter.hasNext()){
             GroupSchedule.Feed gf = iter.next();
-            if (iter.getFeedID.equals(userID)){
+            if (gf.writer.equals(MainActivity.User.getID())){
                 flag = true;
-                break;}
+                break;
+            }
         }
         if (!flag) return 0;
-        * */
-        else if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
-            return 0;
 
-        //피드백을 등록했다면
-        //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재할 때
-        //if (flag) return 1;
+            //피드백을 등록했다면
+            //if groupName, date, startTime 정보가 일치하는 feedback 중 사용자 ID와 일치하는 feedID가 존재할 때
+        if (flag) return 1;
         else return 1;
     }
     public static class ViewHolder {
@@ -114,7 +122,7 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
                 holder.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        addFeedback(gs.getName(), gs.getDescription(), gs.getDate(), gs.getStartTime(), gs.getEndTime(), gs.getLocation());
+                        addFeedback(groupName, gs.getName(), gs.getDescription(), gs.getDate(), gs.getStartTime(), gs.getEndTime(), gs.getLocation());
                         // gs를 넘겨줘야함.
                         FeedbackAdditionForm.feedController.selectedSchedule = gs;
                     }
@@ -131,7 +139,7 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
                 holder.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showFeedback(gs.getName(), gs.getDescription(), gs.getDate(), gs.getStartTime(), gs.getEndTime(), gs.getLocation());
+                        showFeedback(groupName, gs.getName(), gs.getDescription(), gs.getDate(), gs.getStartTime(), gs.getEndTime(), gs.getLocation());
                         // gs를 넘겨줘야함.
                         FeedbackModificationForm.feedController.selectedSchedule = gs;
                     }
@@ -157,8 +165,8 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
         }
         return view;
     }
-    public void addFeedback(String groupName, String name, String date, String startTime, String endTime, String location){
-        Fragment fr = new FeedbackAdditionForm(groupName, name, date, startTime, endTime, location);
+    public void addFeedback(String groupName, String name, String description, String date, String startTime, String endTime, String location){
+        Fragment fr = new FeedbackAdditionForm(groupName, name, description, date, startTime, endTime, location);
         FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
 
@@ -166,8 +174,8 @@ public class GroupFeedbackListAdapter extends BaseAdapter implements ListAdapter
 
         fragmentTransaction.commit();
     }
-    public void showFeedback(String groupName, String name, String date, String startTime, String endTime, String location){
-        Fragment fr = new FeedbackModificationForm(groupName, name, date, startTime, endTime, location);
+    public void showFeedback(String groupName, String name, String description, String date, String startTime, String endTime, String location){
+        Fragment fr = new FeedbackModificationForm(groupName, name, description, date, startTime, endTime, location);
         FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -24,6 +25,10 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
+import com.example.fillinggood.Boundary.home.MainActivity;
+import com.example.fillinggood.Control.PersonalScheduleController;
+import com.example.fillinggood.Entity.Group;
+import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -44,9 +49,9 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
     private Button saveButton;
     private RadioGroup radioGroup;
     private RadioButton fixed, hardly, easily;
-    private long mScheduleID = -1;
     public String name, location, description, priority, date, startTime, endTime, amPm;
 
+    private PersonalScheduleController personalScheduleController = new PersonalScheduleController();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -84,8 +89,18 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
                 parsedDATA = parsedDATA[0].split("-");
                 int year = Integer.parseInt(parsedDATA[0]);
                 int month = Integer.parseInt(parsedDATA[1])+1;
+                String Month;
+                if(month/10 < 1)
+                    Month = "0"+month;
+                else
+                    Month = ""+month;
                 int day = Integer.parseInt(parsedDATA[2]);
-                date =""+year+"."+month+"."+day; //db에 삽입할 값. 위에 public string으로 선언 돼 있음.
+                String Day;
+                if(day/10 < 1)
+                    Day = "0"+day;
+                else
+                    Day = ""+day;
+                date =""+year+"."+Month+"."+Day; //db에 삽입할 값. 위에 public string으로 선언 돼 있음.
                 mDateTextView.setText(date);
             }
         });
@@ -94,6 +109,25 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
         mCalendarView.addDecorator(new EventDecorator(Color.parseColor("#22c6cf"), MarkingDots.markingDots()));
         //오늘 날짜의 색을 바꿈
         mCalendarView.addDecorators(new OneDayDecorator());
+
+        // 그룹 일정 점찍기
+        ArrayList<CalendarDay> datesHavingMeetings = new ArrayList<>();
+        ArrayList<Group> groups = Group.getAllUsersGroup(MainActivity.User.getID());
+        int year, month, day;
+        for (int i=0; i<groups.size(); i++){
+            ArrayList<GroupSchedule> gs = GroupSchedule.getGroupSchedule(groups.get(i).getName());
+            Iterator<GroupSchedule> iter = gs.iterator();
+            while (iter.hasNext()){
+                GroupSchedule g = iter.next();
+                String date = g.getDate();
+                year = Integer.parseInt(date.substring(0,4));
+                month = Integer.parseInt(date.substring(5,7));
+                day = Integer.parseInt(date.substring(8));
+                datesHavingMeetings.add(CalendarDay.from(year, month-1, day));
+            }
+        }
+
+        mCalendarView.addDecorator(new EventDecorator(Color.parseColor("#cf3922"), datesHavingMeetings));
 
         // "이벤트시작시간"은 현재시간이 default로 설정되며, 이후에 자유롭게 설정 가능
         mStartTimeTextView.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +141,16 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
                         PersonalScheduleAdditionForm.this, R.style.MyTimePickerDialogStyle, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        startTime = String.format("%02d:%02d ", hourOfDay, minute);
+                        String HourOfDay, Minute;
+                        if(hourOfDay/10 < 1)
+                            HourOfDay = "0" + hourOfDay;
+                        else
+                            HourOfDay = ""+hourOfDay;
+                        if(minute/10 < 1)
+                            Minute = "0" + minute;
+                        else
+                            Minute = ""+minute;
+                        startTime = String.format("%2s:%2s ", HourOfDay, Minute);
                         mStartTimeTextView.setText(startTime);
                     }
                 }, currentHour, currentMinute, true);
@@ -126,7 +169,16 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
                         PersonalScheduleAdditionForm.this,R.style.MyTimePickerDialogStyle, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        endTime = String.format("%02d:%02d ", hourOfDay, minute);
+                        String HourOfDay, Minute;
+                        if(hourOfDay/10 < 1)
+                            HourOfDay = "0" + hourOfDay;
+                        else
+                            HourOfDay = ""+hourOfDay;
+                        if(minute/10 < 1)
+                            Minute = "0" + minute;
+                        else
+                            Minute = ""+minute;
+                        endTime = String.format("%2s:%2s ", HourOfDay, Minute);
                         mEndTimeTextView.setText(endTime);
                     }
                 }, currentHour+1, currentMinute, true);
@@ -135,105 +187,103 @@ public class PersonalScheduleAdditionForm extends AppCompatActivity {
         });
 
         //여기서부터는 mysql 문법에 맞춰 수정해주세요
-        /*
-        Intent intent = getIntent();
-        if (intent != null) {
-            // 누군가 나를 호출했다면,
-            mScheduleID = intent.getLongExtra("id", -1);
-            String NAME = intent.getStringExtra("name");
-            String LOCATION = intent.getStringExtra("location");
-            String DESCRIPTION = intent.getStringExtra("description");
-            String PRIORITY = intent.getStringExtra("priority");
-            String DATE = intent.getStringExtra("date");
-            String START_TIME = intent.getStringExtra("startTime");
-            String END_TIME = intent.getStringExtra("endTime");
-            mNameEditText.setText(NAME);
-            mLocationEditText.setText(LOCATION);
-            mDescriptionEditText.setText(DESCRIPTION);
-            mDateTextView.setText(DATE);
-            mStartTimeTextView.setText(START_TIME);
-            mEndTimeTextView.setText(END_TIME);
-        } */
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //필수 기입 정보인 일정명, 시간 기입 안 한 경우
                 //date를 startDate랑 endDate로 나누시면 거기에 맞춰서 조건문 수정해주세요
                 if (mNameEditText.getText().toString().length() == 0 || mDateTextView.getText().toString().length()==0
-                || mStartTimeTextView.getText().toString().length()==0 || mEndTimeTextView.getText().toString().length()==0){
-                    Toast.makeText(PersonalScheduleAdditionForm.this, "기입하지 않은 정보가 존재합니다", Toast.LENGTH_SHORT).show();
+                        || mStartTimeTextView.getText().toString().length()==0 || mEndTimeTextView.getText().toString().length()==0){
+                    Toast.makeText(PersonalScheduleAdditionForm.this, "기입하지 않은 정보가 존재합니다\n(이름,날짜,시간)", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 //시간대가 타 일정과 중복될 경우(시작시간과 끝시간이 완전히 일치하는 경우만 고려했습니다...test date set도 맞춰서 작성할게요..)
+                PersonalSchedule thisSch = new PersonalSchedule();
+                thisSch.setDate(mDateTextView.getText().toString());
+                Log.d("check", ""+ thisSch.getDate());
+                thisSch.setStartTime(mStartTimeTextView.getText().toString());
+                Log.d("check", ""+ thisSch.getStartTime());
+                thisSch.setEndTime(mEndTimeTextView.getText().toString());
+                Log.d("check", ""+ thisSch.getEndTime());
 
-                /*
-                ArrayList<PersonalSchedule> ps = getPersonalSchedule(userID);
-                Iterator<PersonalSchedule> iter = ps.iterator();
-                while (iter.hasNext()){
-                    PersonalSchedule p = iter.next();
-                    if (p.getDate().equals(mDateTextView.getText().toString())){
-                        if (p.getStartTime().equals(mStartTimeTextView.getText().toString())
-                                || p.getEndTime().equals(mEndTimeTextView.getText().toString())){
-                            Toast.makeText(PersonalScheduleAdditionForm.this, "해당 시간대에 이미 등록된 일정이 존재합니다", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                boolean overlap_check = false;
+                ArrayList<PersonalSchedule> myps = personalScheduleController.getAllPS(MainActivity.User.getID());
+                for(int i = 0; i < myps.size(); i++){
+                    if(personalScheduleController.Overlap_add(thisSch, myps.get(i))) {
+                        overlap_check = true;
+                        break;
                     }
-                }*/
+                }
+                ArrayList<GroupSchedule> mygs = personalScheduleController.getAllGS(MainActivity.User.getID());
+                for(int i = 0; i < mygs.size(); i++){
+                    if(personalScheduleController.Overlap_add(thisSch, mygs.get(i))){
+                        overlap_check = true;
+                        break;
+                    }
+                }
 
-                saveButtonClicked();
-                onBackPressed();
 
-                Toast.makeText(PersonalScheduleAdditionForm.this, "일정이 등록되었습니다", Toast.LENGTH_SHORT).show();
+                if(overlap_check == true){
+                    Toast.makeText(PersonalScheduleAdditionForm.this, "해당 시간대에 이미 등록된 일정이 존재합니다", Toast.LENGTH_SHORT).show();
+                }else {
+                    saveButtonClicked();
+                    onBackPressed();
+                    //finish();
+
+                    Toast.makeText(PersonalScheduleAdditionForm.this, "일정이 등록되었습니다", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
     public void saveButtonClicked() {
+        int PRIORITY;
 
         String NAME = mNameEditText.getText().toString();
         String LOCATION = mLocationEditText.getText().toString();
         String DESCRIPTION = mDescriptionEditText.getText().toString();
         if (fixed.isChecked()) {
             priority = fixed.getText().toString();
+            PRIORITY = 10;
         }
         else if (hardly.isChecked()) {
             priority = hardly.getText().toString();
+            PRIORITY = 5;
         }
         else if (easily.isChecked()) {
             priority = easily.getText().toString();
+            PRIORITY = 0;
         }
         else {
             priority = "null"; //조정불가 버튼 default 해제해서 해당 조건문 추가했습니다
+            if (NAME.contains("약속") || DESCRIPTION.contains("약속"))
+                PRIORITY = 1;
+            else if (NAME.contains("은행") || NAME.contains("미용실") || NAME.contains("병원")
+                    || DESCRIPTION.contains("은행") || DESCRIPTION.contains("미용실") || DESCRIPTION.contains("병원"))
+                PRIORITY = 2;
+            else if (NAME.contains("취미") || DESCRIPTION.contains("취미"))
+                PRIORITY = 3;
+            else if (NAME.contains("고정 밥") || NAME.contains("고밥") ||
+                    DESCRIPTION.contains("고정 밥") || DESCRIPTION.contains("고밥"))
+                PRIORITY = 4;
+            else if (NAME.contains("가족 행사") || DESCRIPTION.contains("가족 행사"))
+                PRIORITY = 6;
+            else if (NAME.contains("팀플") || NAME.contains("팀 프로젝트") || NAME.contains("조별과제") ||
+                    DESCRIPTION.contains("팀플") || DESCRIPTION.contains("팀 프로젝트") || DESCRIPTION.contains("조별과제"))
+                PRIORITY = 7;
+            else if (NAME.contains("동아리") || NAME.contains("학회") ||
+                    DESCRIPTION.contains("동아리") || DESCRIPTION.contains("학회"))
+                PRIORITY = 8;
+            else if (NAME.contains("알바") || NAME.contains("학교 행사") ||
+                    DESCRIPTION.contains("알바") || DESCRIPTION.contains("학교 행사"))
+                PRIORITY = 9;
+            else
+                PRIORITY = -1;
         }
-        String PRIORITY = priority;
         String DATE = mDateTextView.getText().toString();
         String START_TIME = mStartTimeTextView.getText().toString();
         String END_TIME = mEndTimeTextView.getText().toString();
 
-        /*
-        // SQLite에 저장하는 기본적인 방법 = ContentValues라는 객체를 만들어 거기에 담아서 DB에 저장
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_NAME, NAME);
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_LOCATION, LOCATION);
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_DESCRIPTION, DESCRIPTION);
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_PRIORITY, PRIORITY);
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_DATE, DATE);
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_START_TIME, START_TIME);
-        contentValues.put(ScheduleContract.ScheduleEntry.COLUMN_NAME_END_TIME, END_TIME);
-
-        // DB에 작성할 것이기 때문에 WritableDatabase
-        SQLiteDatabase db = ScheduleDbHelper.getInstance(this).getWritableDatabase();
-        // 수정이 아니라 최초 저장인 경우
-        long newRowID = db.insert(ScheduleContract.ScheduleEntry.TABLE_NAME,
-                null,
-                contentValues);
-
-        if (newRowID == -1) {
-            Toast.makeText(this, "저장에 문제가 발생하였습니다", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "일정이 저장되었습니다", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-        }
-        // 잘 되었는지 안 되었는지는 return 값으로 확인 가능
-        // 잘 되었다면 return row_ID(long type), 안 되었다면 return -1*/
+        personalScheduleController.AddSchedule(MainActivity.User, NAME, LOCATION, DESCRIPTION, PRIORITY, DATE, START_TIME, END_TIME);
     }
 }

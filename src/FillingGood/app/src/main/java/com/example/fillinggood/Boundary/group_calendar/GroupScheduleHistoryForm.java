@@ -10,16 +10,19 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
 import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleList;
+import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 //그룹 내에서 가졌던 일정 내역을 보여주는 class 입니다
 public class GroupScheduleHistoryForm extends AppCompatActivity {
@@ -28,7 +31,7 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
     private String tempDate2 = "";
     private boolean isEventsShown = true ;
     private CalendarDay todayDate;
-    private String groupName;
+    protected String groupName;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,21 +55,20 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
         ArrayList<CalendarDay> datesUpcoming = new ArrayList<>();
 
         /*이미 지난 일정인지, 다가오는 일정인지 체크하는 파트*/
-        /*
-        ArrayList<GroupSchedule> gs = getGroupSchedule(groupName);
+
+        ArrayList<GroupSchedule> gs = DBmanager.getInstance().getGroupSchedule(groupName);
+        if(gs.size() < 1)
+            gs = new ArrayList<>();
         Iterator<GroupSchedule> iter = gs.iterator();
         while (iter.hasNext()){
             String date = iter.next().getDate();
-            int year = Integer.parseInt(date.substring(0,4)); int month = Integer.parseInt(date.substring(5,7));
+            int year = Integer.parseInt(date.substring(0,4));
+            int month = Integer.parseInt(date.substring(5,7));
             int day = Integer.parseInt(date.substring(8,10));
             long Date = year*10000 + month*100 + day;
-            if (Date<today), datesPassed.add(CalendarDay.from(year, month-1, day));
-            if (Date>=today), datesUpcoming.add(CalendarDay.from(year, month-1, day));
+            if (Date<today) datesPassed.add(CalendarDay.from(year, month-1, day));
+            if (Date>=today) datesUpcoming.add(CalendarDay.from(year, month-1, day));
         }
-        * */
-        datesPassed.add(CalendarDay.from(2019, 10, 20));
-        datesPassed.add(CalendarDay.from(2019, 10, 21));
-        datesUpcoming.add(CalendarDay.from(2019, 10, 27));
 
         //일정을 가진 날짜에 점 찍는 함수
         materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#808080"), datesPassed));
@@ -87,8 +89,18 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
                 parsedDATA = parsedDATA[0].split("-");
                 int year = Integer.parseInt(parsedDATA[0]);
                 int month = Integer.parseInt(parsedDATA[1])+1;
+                String Month;
+                if(month/10 < 1)
+                    Month = "0"+month;
+                else
+                    Month = ""+month;
                 int day = Integer.parseInt(parsedDATA[2]);
-                date =""+year+"."+month+"."+day;
+                String Day;
+                if(day/10 < 1)
+                    Day = "0"+day;
+                else
+                    Day = ""+day;
+                date =""+year+"."+Month+"."+Day;
 
                 //날짜를 선택할시, 하단에 해당 날짜에 대한 일정을 리스트업하는 fragment를 호출하는 함수
                 if (tempDate2.equals("")) tempDate2 = date;
@@ -99,7 +111,7 @@ public class GroupScheduleHistoryForm extends AppCompatActivity {
     }
 
     public void showEvents(String date){
-        Fragment fr = new GroupFeedbackList(date);
+        Fragment fr = new GroupFeedbackList(groupName, date);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
 

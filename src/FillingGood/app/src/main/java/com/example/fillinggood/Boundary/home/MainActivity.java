@@ -1,10 +1,13 @@
 package com.example.fillinggood.Boundary.home;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
 import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
+import com.example.fillinggood.Entity.GroupMember;
 import com.example.fillinggood.R;
 
 import androidx.navigation.NavController;
@@ -16,13 +19,20 @@ import com.google.android.material.navigation.NavigationView;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.ravikoradiya.library.CenterTitle;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import android.util.Log;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.Manifest;
 
 //어플리케이션 들어왔을 때, 처음 맞이하게 되는 화면입니다
 public class MainActivity extends AppCompatActivity {
+
+    public static GroupMember User;
 
     private AppBarConfiguration mAppBarConfiguration;
     @Override
@@ -31,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent = getIntent();
+        //String userID = intent.getExtras().getString("id");
+        String userID = "test1";
+        User = DBmanager.getInstance().getUser(userID);
 
         //actionbar(상단바) title 가운데로 정렬
         CenterTitle.centerTitle(toolbar,true);

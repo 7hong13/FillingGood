@@ -1,12 +1,20 @@
 package com.example.fillinggood.Entity;
 
-public class PersonalSchedule extends Schedule{
-    private String priority;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.util.Log;
+
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
+
+public class PersonalSchedule extends Schedule {
+    private int priority;
 
     // 생성자
     public PersonalSchedule() {};
-    public PersonalSchedule(String name, String location, String description, String priority,
-                    String date, String startTime, String endTime) {
+
+    public PersonalSchedule(String name, String location, String description, int priority,
+                            String date, String startTime, String endTime) {
         this.name = name;
         this.location = location;
         this.description = description;
@@ -16,45 +24,32 @@ public class PersonalSchedule extends Schedule{
         this.endTime = endTime;
     }
 
-
-    // DB에 Schedule 저장 > DBmanager 호출해서 저장.
-    public static int save(long mScheduleID) {
-
-        String ENDDATE;
-
-        return 0;
+    public static PersonalSchedule get(String userID, String date, String starttime){
+        String Date = date.replace(".", "");
+        String StartTime = starttime.replace(":", "") + "00";
+        return  DBmanager.getInstance().getOnePersonalSchedule(userID,Date,StartTime);
     }
 
-    public static int modify(long mScheduleID) {
-
-        String ENDDATE;
-
-        return 0;
+    public void delete(String userID, String date, String starttime){
+        String Date = date.replace(".", "");
+        String StartTime = starttime.replace(":", "") + "00";
+        DBmanager.getInstance().delOnePsch(userID, Date, StartTime);
     }
 
-    public static long delete() {
-
-        String ENDDATE;
-
-        return 0;
+    public void saveThis(String userID){
+        DBmanager.getInstance().saveOnePersonalSchedule(userID, this);
     }
+
+
+
+
 
     // GETTERs & SETTERs
-    public String getName() {return  name;}
-    public void setName(String name) {this.name = name;}
-
-    public String getDescription() {return description;}
-    public void setDescription(String description) {this.description = description;}
-
-    public String getPriority() { return priority; }
-    public void setPriority(String priority) { this.priority = priority; }
-
-    public String getDate() {return date;}
-    public void setDate(String date) {this.date = date;}
-
-    public String getStartTime() {return startTime;}
-    public void setStartTime(String startTime) {this.startTime = startTime;}
-
-    public String getEndTime() {return endTime;}
-    public void setEndTime(String endTime) {this.endTime = endTime;}
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 }
+

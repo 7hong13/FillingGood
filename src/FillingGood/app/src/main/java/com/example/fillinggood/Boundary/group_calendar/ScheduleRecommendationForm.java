@@ -27,6 +27,10 @@ public class ScheduleRecommendationForm extends AppCompatActivity implements Mon
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        groupName = getIntent().getStringExtra("groupName");
+        Bundle bundle = new Bundle();
+        bundle.putString("groupName",groupName);
+        bundle.putString("date", date);
         /*
         ArrayList<String> list = new ArrayList<>(); //시간 추천 결과 5순위를 담고있는 arraylist라고 가정
         //ArrayList<String> list = getRecommended().. 이런식으로..

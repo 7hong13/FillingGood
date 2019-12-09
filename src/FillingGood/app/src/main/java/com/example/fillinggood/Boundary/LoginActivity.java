@@ -40,13 +40,16 @@ public class LoginActivity extends AppCompatActivity {
                     pw.requestFocus();
                     return;
                 }
+                // DB로부터 읽어오기
                 //if 존재하지 않는 아이디라면, Toast~
                 Toast.makeText(LoginActivity.this, "존재하지 않는 ID입니다", Toast.LENGTH_SHORT).show();
                 //if 아이디와 비번이 매칭되지 않는다면, Toast~
-                Toast.makeText(LoginActivity.this, "잘못된 비밀번호입니다", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "비밀번호가 잘못됐습니다", Toast.LENGTH_SHORT).show();
 
                 //if에 안 걸릴 경우,
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                //intent.putExtra("id", ID.getText().toString());
+                intent.putExtra("id", "fg11");
                 startActivity(intent);
             }
         });

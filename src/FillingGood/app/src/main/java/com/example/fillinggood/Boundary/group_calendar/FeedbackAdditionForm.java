@@ -14,10 +14,13 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
+import com.example.fillinggood.Boundary.home.MainActivity;
 import com.example.fillinggood.Control.FeedbackController;
 import com.example.fillinggood.R;
 
 public class FeedbackAdditionForm extends Fragment {
+    private String groupName;
     private String name;
     private String description;
     private String date;
@@ -25,16 +28,18 @@ public class FeedbackAdditionForm extends Fragment {
     private String endTime;
     private String location;
 
-    final static protected FeedbackController feedController = new FeedbackController();
+    static protected FeedbackController feedController;
 
     FeedbackAdditionForm(){}
-    FeedbackAdditionForm(String name, String description, String date, String startTime, String endTime, String location){
+    FeedbackAdditionForm(String groupName, String name, String description, String date, String startTime, String endTime, String location){
+        this.groupName = groupName;
         this.description = description;
         this.name = name;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
         this.location = location;
+        feedController = new FeedbackController(groupName, FeedbackController.getOneGroupSchedule(this.groupName, this.date, this.startTime));
     }
     private TextView T_description, T_name, T_time, T_location;
     private Button saveButton;
@@ -78,15 +83,21 @@ public class FeedbackAdditionForm extends Fragment {
             public void onClick(View v) {
                 //피드백 내용 저장하는 코드
                 //FeedbackController.AddFeed(feedback.getText().toString());
-                feedController.AddFeed(feedback.getText().toString());
+                if(feedback.getText().toString().length() < 1){
+                    Toast.makeText(getContext(), "피드백을 입력해주세요", Toast.LENGTH_SHORT).show();
+                } else if(feedback.getText().toString().length() > 45){
+                    Toast.makeText(getContext(), "평가는 45자를 초과할 수 없습니다", Toast.LENGTH_SHORT).show();
+                }else {
+                    feedController.AddFeed(groupName, MainActivity.User.getID(), feedback.getText().toString());
 
-                getActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.feedback, new GroupFeedbackList(date))
-                        .addToBackStack(null)
-                        .commit();
+                    getActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.feedback, new GroupFeedbackList(groupName, date))
+                            .addToBackStack(null)
+                            .commit();
 
-                Toast.makeText(getContext(), "피드백이 등록되었습니다", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "피드백이 등록되었습니다", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return root;

@@ -20,10 +20,15 @@ import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalCalendarFragment;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleAdditionForm;
+import com.example.fillinggood.Entity.Group;
+import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import static com.example.fillinggood.R.layout.fragment_home;
 
@@ -54,6 +59,23 @@ public class HomeFragment extends Fragment {
 
         //오늘 날짜의 색을 바꿈
         materialCalendarView.addDecorators(new OneDayDecorator());
+
+        ArrayList<CalendarDay> datesHavingMeetings = new ArrayList<>();
+        ArrayList<Group> groups = Group.getAllUsersGroup(MainActivity.User.getID());
+        for (int i=0; i<groups.size(); i++){
+            ArrayList<GroupSchedule> gs = GroupSchedule.getGroupSchedule(groups.get(i).getName());
+            Iterator<GroupSchedule> iter = gs.iterator();
+            while (iter.hasNext()){
+                GroupSchedule g = iter.next();
+                String date = g.getDate();
+                int year = Integer.parseInt(date.split(".")[0]);
+                int month = Integer.parseInt(date.split(".")[1]);
+                int day = Integer.parseInt(date.split(".")[2]);
+                datesHavingMeetings.add(CalendarDay.from(year, month-1, day));
+            }
+        }
+
+        materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#cf3922"), datesHavingMeetings));
 
         return root;
     }

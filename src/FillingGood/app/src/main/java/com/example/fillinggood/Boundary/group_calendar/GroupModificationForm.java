@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
+import com.example.fillinggood.Boundary.home.MainActivity;
+import com.example.fillinggood.Control.GroupManagementController;
 import com.example.fillinggood.Entity.Group;
 import com.example.fillinggood.R;
 
@@ -31,6 +35,8 @@ public class GroupModificationForm extends AppCompatActivity {
     ArrayList<String> list = new ArrayList<String>();
     int pos;
 
+    GroupManagementController groupManagementController;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.modify_group_information);
@@ -43,6 +49,8 @@ public class GroupModificationForm extends AppCompatActivity {
         //모임명으로 입력된 값
         groupName = (EditText)findViewById(R.id.groupName);
         groupName.setText(A.getStringExtra("name"));
+        groupManagementController = new GroupManagementController(groupName.getText().toString(), MainActivity.User);
+        final String tempName = groupName.getText().toString();
 
         //모임 설명으로 입력된 값
         groupDescription = (EditText)findViewById(R.id.groupDescription);
@@ -54,11 +62,14 @@ public class GroupModificationForm extends AppCompatActivity {
         //현재 추가된 모임 구성원 이름들
         groupMembers = (ListView)findViewById(R.id.groupMembers);
         //기존 모임 구성원들이 화면상 추가돼 있도록 보여주는 코드
-        Iterator<String> iter = A.getStringArrayListExtra("groupmem").iterator();
-        while (iter.hasNext()){
-            String s = iter.next();
-            list.add(s);
-        }
+        String[] mems = A.getStringExtra("groupmem").split(" ");
+        for(int i = 0; i < mems.length; i++)
+            list.add(mems[i]);
+        //Iterator<String> iter = A.getStringArrayListExtra("groupmem").iterator();
+        //while (iter.hasNext()){
+        //    String s = iter.next();
+        //    list.add(s);
+        //}
         GroupMemberListviewAdapter adapter = new GroupMemberListviewAdapter(list, GroupModificationForm.this);
         //handle listview and assign adapter
         ListView lView = (ListView)findViewById(R.id.groupMembers);
@@ -74,11 +85,26 @@ public class GroupModificationForm extends AppCompatActivity {
         addMember.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //아이디를 db에서 검색 후, 그 아이디를 모임 구성원으로 추가하고
-                //그에 해당하는 이름을 화면에 출력하는 코드를 작성해 주세요
-                //아래는 list라는 string array-list(상단에 선언)에 add한 값을 화면상에 출력하는 코드입니다
-                list.add(addedGroupMember.getText().toString());
-                addedGroupMember.setText("");
+                String memID = addedGroupMember.getText().toString();
+
+                int findmember = groupManagementController.FindMember(memID);
+                if(findmember == -1){ // 존재하지 않는 ID
+                    Toast.makeText(GroupModificationForm.this, "존재하지 않는 ID입니다", Toast.LENGTH_SHORT).show();
+                    addedGroupMember.setText("");
+                } else if(findmember == -2){
+                    Toast.makeText(GroupModificationForm.this, "본인을 추가할 수 없습니다", Toast.LENGTH_SHORT).show();
+                    addedGroupMember.setText("");
+                }
+                else if(findmember == 1){ // 이미 추가된 구성원입니다.
+                    int addmember = groupManagementController.AddMember(memID);
+                    if(addmember == -1) {
+                        Toast.makeText(GroupModificationForm.this, "이미 추가된 구성원입니다", Toast.LENGTH_SHORT).show();
+                        addedGroupMember.setText("");
+                    } else if(addmember == 1){
+                        list.add(memID);
+                        addedGroupMember.setText("");
+                    }
+                }
                 //instantiate custom adapter
                 GroupMemberListviewAdapter adapter = new GroupMemberListviewAdapter(list, GroupModificationForm.this);
                 //handle listview and assign adapter
@@ -92,48 +118,60 @@ public class GroupModificationForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //모임 정보를 db로 올리는 코드를 작성해주세요
+                int findgroup = groupManagementController.FindGroup(groupName.getText().toString());
+                if (findgroup == -1) {
+                    Toast.makeText(GroupModificationForm.this, "모임명은 변경할 수 없습니다", Toast.LENGTH_LONG).show();
+                    groupName.setText(tempName);
+                } else if (findgroup == 1) {
 
+                    //else일 때 아래 두줄 실행
+                    AlertDialog.Builder builder = new AlertDialog.Builder(GroupModificationForm.this);
+                    builder.setTitle("모임 정보 수정")        // 제목 설정
+                            .setMessage("모임 정보를 수정하겠습니까?")        // 메세지 설정
+                            .setCancelable(false)        // 뒤로 버튼 클릭시 취소 가능 설정
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
+                                public void onClick(DialogInterface dialog, int whichButton) {
 
-                //else일 때 아래 두줄 실행
-                AlertDialog.Builder builder = new AlertDialog.Builder(GroupModificationForm.this);
-                builder.setTitle("모임 정보 수정")        // 제목 설정
-                        .setMessage("모임 정보를 수정하겠습니까?")        // 메세지 설정
-                        .setCancelable(false)        // 뒤로 버튼 클릭시 취소 가능 설정
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener(){
-                            // 확인 버튼 클릭시 설정, 오른쪽 버튼입니다.
-                            public void onClick(DialogInterface dialog, int whichButton){
+                                    String name = groupName.getText().toString();
+                                    String description = groupDescription.getText().toString();
+                                    if(list.size() == 0){
+                                        Toast.makeText(GroupModificationForm.this, "모임 구성원을 추가해주세요", Toast.LENGTH_SHORT).show();
+                                    } else {
 
-                                String name = groupName.getText().toString();
-                                String description = groupDescription.getText().toString();
-                                Intent intent = new Intent(GroupModificationForm.this,GroupListFragment.class);
-                                intent.putExtra("name", name);
-                                intent.putExtra("description", description);
-                                intent.putExtra("check", true);
-                                intent.putExtra("groupmem", list);
-                                intent.putExtra("id2", pos);
-                                setResult(RESULT_OK,intent);
-                                finish();
-                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                        groupManagementController.saveGroup(MainActivity.User.getID(), name, description, list);
 
-                                //if 모임 이름 중복, Toast.makeText(GroupModificationForm.this, "이미 존재하는 모임 이름입니다", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(GroupModificationForm.this, GroupListFragment.class);
+                                        intent.putExtra("name", name);
+                                        intent.putExtra("description", description);
+                                        intent.putExtra("check", true);
+                                        intent.putExtra("groupmem", list);
+                                        intent.putExtra("id2", pos);
+                                        setResult(RESULT_OK, intent);
+                                        finish();
 
-                                Toast.makeText(GroupModificationForm.this, "모임이 수정되었습니다", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener(){
-                            // 취소 버튼 클릭시 설정, 왼쪽 버튼입니다.
-                            public void onClick(DialogInterface dialog, int whichButton){
-                                //원하는 클릭 이벤트를 넣으시면 됩니다.
+                                        Toast.makeText(GroupModificationForm.this, "모임이 수정되었습니다", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                // 취소 버튼 클릭시 설정, 왼쪽 버튼입니다.
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    //원하는 클릭 이벤트를 넣으시면 됩니다.
 
-                            }
-                        });
-                final AlertDialog dialog = builder.create();    // 알림창 객체 생성
+                                }
+                            });
+                    final AlertDialog dialog = builder.create();    // 알림창 객체 생성
 
-                dialog.setOnShowListener( new DialogInterface.OnShowListener()
-                { @Override public void onShow(DialogInterface arg0) {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK); } });
-                dialog.show();    // 알림창 띄우기
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface arg0) {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                        }
+                    });
+                    dialog.show();    // 알림창 띄우기
+                }
             }
         });
 

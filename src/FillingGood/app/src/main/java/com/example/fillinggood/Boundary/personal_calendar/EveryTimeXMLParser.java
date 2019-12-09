@@ -1,5 +1,7 @@
 package com.example.fillinggood.Boundary.personal_calendar;
 
+import com.example.fillinggood.Entity.PersonalSchedule;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -17,7 +19,7 @@ import java.util.List;
 
 public class EveryTimeXMLParser {
 
-    public String everytime(String ETID,String ETPWD,String Year,String sem) throws IOException {
+    public ArrayList<PersonalSchedule> everytime(String ETID,String ETPWD,String Year,String sem) throws IOException {
 
 
 
@@ -62,18 +64,19 @@ public class EveryTimeXMLParser {
             System.out.println(e);
         }
         System.out.println(new String(data));
-        String d = getXml(new ByteArrayInputStream(data));
+        ArrayList<PersonalSchedule> d = getXml(new ByteArrayInputStream(data));
         return d;
     }
 
 
-    private String getXml (InputStream is){
+    private ArrayList<PersonalSchedule> getXml (InputStream is){
         List<String> cls = new ArrayList<String>();
         List<ArrayList<String>> day = new ArrayList<ArrayList<String>>();
         List<String> StartTime = new ArrayList<String>();
         List<String> EndTime = new ArrayList<String>();
         List<String> Place = new ArrayList<String>();
         ArrayList<String> datas = null;
+        ArrayList<PersonalSchedule> ps = new ArrayList<>();
         int n = 1;
 
 
@@ -101,20 +104,20 @@ public class EveryTimeXMLParser {
                             cls.add(xmlPullParser.getAttributeValue(0));
                         } else if ("data".contentEquals(tagName)) {
 
-                           if(n==1){
-                               datas = new ArrayList<String>();
-                               datas.add(xmlPullParser.getAttributeValue(0));
+                            if(n==1){
+                                datas = new ArrayList<String>();
+                                datas.add(xmlPullParser.getAttributeValue(0));
 
-                               n+=1;
-                           }
-                           if(n==2 && xmlPullParser.getAttributeValue(0)!= datas.get(0)){
-                               datas.add(xmlPullParser.getAttributeValue(0));
-                               day.add(datas);
-                               StartTime.add(xmlPullParser.getAttributeValue(1));
-                               EndTime.add(xmlPullParser.getAttributeValue(2));
-                               Place.add(xmlPullParser.getAttributeValue(3));
-                               n=1;
-                           }
+                                n+=1;
+                            }
+                            if(n==2 && xmlPullParser.getAttributeValue(0)!= datas.get(0)){
+                                datas.add(xmlPullParser.getAttributeValue(0));
+                                day.add(datas);
+                                StartTime.add(xmlPullParser.getAttributeValue(1));
+                                EndTime.add(xmlPullParser.getAttributeValue(2));
+                                Place.add(xmlPullParser.getAttributeValue(3));
+                                n=1;
+                            }
 
                         }
                         if (xmlPullParser.getName().equals("b")) {
@@ -148,17 +151,18 @@ public class EveryTimeXMLParser {
                 System.out.println("시작 시간 : " + StartTime.get(i));
                 System.out.println("끝나는 시간 : " + EndTime.get(i));
                 System.out.println("강의 : " + Place.get(i));
-
-
-
-
+                int day_num = day.get(i).size();
+                for (int j=0; j<day_num; j++){
+                    PersonalSchedule p = new PersonalSchedule(cls.get(i), Place.get(i), cls.get(i), 10,
+                            day.get(i).get(j), StartTime.get(i), EndTime.get(i));
+                    ps.add(p);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return ps;
 
     }
 
 }
-

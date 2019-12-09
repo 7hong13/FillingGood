@@ -2,7 +2,9 @@ package com.example.fillinggood.Boundary.personal_calendar;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,11 +22,19 @@ import com.example.fillinggood.Boundary.EventDecorator;
 import com.example.fillinggood.Boundary.MarkingDots;
 import com.example.fillinggood.Boundary.OneDayDecorator;
 import com.example.fillinggood.Boundary.group_calendar.GroupAdditionForm;
+import com.example.fillinggood.Boundary.home.MainActivity;
+import com.example.fillinggood.Control.PersonalScheduleController;
+import com.example.fillinggood.Entity.Group;
+import com.example.fillinggood.Entity.GroupSchedule;
+import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 //내 일정 관리 페이지로 들어왔을 때, 처음 맞이하게 되는 화면입니다
 public class PersonalCalendarFragment extends Fragment {
@@ -35,6 +45,8 @@ public class PersonalCalendarFragment extends Fragment {
     private String tempDate = "";
     private boolean isEventsShown = true ;
     private String tempDate2 = "";
+
+    private PersonalScheduleController personalScheduleController = new PersonalScheduleController();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -75,8 +87,18 @@ public class PersonalCalendarFragment extends Fragment {
                 parsedDATA = parsedDATA[0].split("-");
                 int year = Integer.parseInt(parsedDATA[0]);
                 int month = Integer.parseInt(parsedDATA[1])+1;
+                String Month;
+                if(month/10 < 1)
+                    Month = "0"+month;
+                else
+                    Month = ""+month;
                 int day = Integer.parseInt(parsedDATA[2]);
-                date =""+year+"."+month+"."+day;
+                String Day;
+                if(day/10 < 1)
+                    Day = "0"+day;
+                else
+                    Day = ""+day;
+                date =""+year+"."+Month+"."+Day; //db에 삽입할 값. 위에 public string으로 선언 돼 있음.
 
                 //날짜를 선택할시, 하단에 해당 날짜에 대한 일정을 리스트업하는 fragment를 호출하는 함수
                 if (tempDate2.equals("")) tempDate2 = date;
@@ -84,11 +106,31 @@ public class PersonalCalendarFragment extends Fragment {
                 tempDate2 = date;
             }
         });
+
+
         //일정을 가진 날짜에 점 찍는 함수
         materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#22c6cf"), MarkingDots.markingDots()));
-
         //오늘 날짜의 색을 바꿈
         materialCalendarView.addDecorators(new OneDayDecorator());
+
+        // 그룹 일정 점찍기
+        ArrayList<CalendarDay> datesHavingMeetings = new ArrayList<>();
+        ArrayList<Group> groups = Group.getAllUsersGroup(MainActivity.User.getID());
+        int year, month, day;
+        for (int i=0; i<groups.size(); i++){
+            ArrayList<GroupSchedule> gs = GroupSchedule.getGroupSchedule(groups.get(i).getName());
+            Iterator<GroupSchedule> iter = gs.iterator();
+            while (iter.hasNext()){
+                GroupSchedule g = iter.next();
+                String date = g.getDate();
+                year = Integer.parseInt(date.substring(0,4));
+                month = Integer.parseInt(date.substring(5,7));
+                day = Integer.parseInt(date.substring(8));
+                datesHavingMeetings.add(CalendarDay.from(year, month-1, day));
+            }
+        }
+
+        materialCalendarView.addDecorator(new EventDecorator(Color.parseColor("#cf3922"), datesHavingMeetings));
 
         setHasOptionsMenu(true);
         return root;

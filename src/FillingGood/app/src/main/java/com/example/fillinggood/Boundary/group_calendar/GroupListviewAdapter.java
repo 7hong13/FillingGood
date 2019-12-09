@@ -15,19 +15,25 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
 import com.example.fillinggood.Boundary.home.MainActivity;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleModificationForm;
+import com.example.fillinggood.Control.GroupManagementController;
 import com.example.fillinggood.Entity.Group;
 import com.example.fillinggood.R;
 
 import org.w3c.dom.Text;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 //"내 모임 목록"에서 개별 모임의 관리를 맡는 class로, 밑에 "삭제 버튼"에 대한 코드만 작성해주시면 됩니다
 public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
-    private ArrayList<Group> list = new ArrayList<>();
+    protected ArrayList<Group> list = new ArrayList<>();
     private Context context;
+
+    GroupManagementController groupManagementController = new GroupManagementController(MainActivity.User);
 
     public GroupListviewAdapter(ArrayList<Group> list, Context context) {
         this.list = list;
@@ -63,6 +69,8 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        list = groupManagementController.FindAllUserGroup(MainActivity.User.getID());
+
         View view = convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -75,7 +83,14 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
         TextView groupmem = (TextView)view.findViewById(R.id.groupmem);
         groupInfo.setText(list.get(position).getName());
         groupde.setText(list.get(position).getDescription());
-        groupmem.setText(list.get(position).getGroupMembers().toString());
+
+        String members = new String();
+        members += list.get(position).getGroupLeader().getName();
+        for(int i = 0; i < list.get(position).getGroupMembers().size(); i++){
+            members += " " + list.get(position).getGroupMembers().get(i).getName();
+        }
+        //groupmem.setText(list.get(position).getGroupMembers().toString());
+        groupmem.setText(members);
 
         //Handle buttons and add onClickListeners
         Button modifyButton = (Button)view.findViewById(R.id.button1);
@@ -88,10 +103,10 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //해당 버튼을 누를시, 그룹 정보를 수정하는 class로 이동합니다
-                /*if (!getGroupLeader(list.get(position).getName()).equals(userID)) {
+                if (!DBmanager.getInstance().getGroupLeader(list.get(position).getName()).getID().equals(MainActivity.User.getID())) {
                     Toast.makeText(context, "모임장만 접근이 가능합니다", Toast.LENGTH_SHORT).show();
                     return;
-                }*/
+                }
                 if(mListener != null) {
                     mListener.onChangeClick(position);
                 }
@@ -103,10 +118,10 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 //if 모임장 아니면
-                /*if (!getGroupLeader(list.get(position).getName()).equals(userID)) {
+                if (!DBmanager.getInstance().getGroupLeader(list.get(position).getName()).getID().equals(MainActivity.User.getID())) {
                     Toast.makeText(context, "모임장만 접근이 가능합니다", Toast.LENGTH_SHORT).show();
                     return;
-                }*/
+                }
 
                 //if에 안 걸리면, 아래 전체 수행
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -120,6 +135,8 @@ public class GroupListviewAdapter extends BaseAdapter implements ListAdapter {
                                 //list.remove(position); //or some other task
                                 //notifyDataSetChanged();
                                 //해당 버튼을 누를시, 그룹 정보가 db에서 삭제되도록 코드를 짜주세요
+
+
                                 if(mListener != null) {
                                     mListener.onDeleteClick(position);
                                 }

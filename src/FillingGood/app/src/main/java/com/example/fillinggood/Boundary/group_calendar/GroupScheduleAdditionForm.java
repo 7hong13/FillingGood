@@ -132,7 +132,7 @@ public class GroupScheduleAdditionForm extends AppCompatActivity {
                     dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK); } });
 
                 dialog.show();    // 알림창 띄우기
-        }
+            }
         });
     }
 

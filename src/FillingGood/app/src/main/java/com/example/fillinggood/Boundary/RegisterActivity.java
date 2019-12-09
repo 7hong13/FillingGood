@@ -58,6 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
+                //if 아이디 및 비밀번호 조건 미달일 경우
+
                 //if에 안 걸릴 경우, 정보를 db로 보낸 뒤 로그인 페이지로 이동
                 //여기에 db로 회원정보 넘기는 코드 작성 필요
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

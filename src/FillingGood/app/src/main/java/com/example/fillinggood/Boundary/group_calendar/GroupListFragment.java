@@ -2,6 +2,7 @@ package com.example.fillinggood.Boundary.group_calendar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,8 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.fillinggood.Boundary.home.MainActivity;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleAdditionForm;
-import com.example.fillinggood.Control.GroupController;
+import com.example.fillinggood.Control.GroupManagementController;
+import com.example.fillinggood.Control.GroupManagementController;
 import com.example.fillinggood.Entity.Group;
 import com.example.fillinggood.R;
 
@@ -32,9 +35,14 @@ import static android.app.Activity.RESULT_OK;
 public class GroupListFragment extends Fragment {
     private int REQUEST_ADD = 1;
     private int REQUEST_MOD = 2;
-    private GroupController ctrl;
+    private GroupListviewAdapter adapter;
 
     private GroupListViewModel groupListViewModel;
+
+    private GroupManagementController groupManagementController;
+    private ArrayList<Group> list;
+
+    protected ListView lView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -51,37 +59,24 @@ public class GroupListFragment extends Fragment {
         //상단 우측 메뉴 변경
         setHasOptionsMenu(true);
 
+        groupManagementController = new GroupManagementController(MainActivity.User);
 
-
-
-        //GUI 구성을 보이기 위한 arraylist로, db 구축 후 적절한 코드로 대체해주세요
-        //list에 add한 정보들이 화면상에 뜨게 되는 구조입니다
-        /*
-        ArrayList<Group> list = getUserGroup(userID);
-        (아래 코드 지워주세요)
-        }
-        * */
-        ArrayList<Group> list = new ArrayList<Group>();
-        ArrayList<String> memlist = new ArrayList<String>();
-        memlist.add("함형우");
-        memlist.add("김지환");
-        memlist.add("김형준");
-        memlist.add("김지현");
-        memlist.add("김동욱");
-        list.add(new Group("융종설 4팀","융합소프트웨어 종합 설계 19-2학기",memlist));
-
+        list = groupManagementController.FindAllUserGroup(MainActivity.User.getID());
 
         //instantiate custom adapter
-        GroupListviewAdapter adapter = new GroupListviewAdapter(list, getActivity());
+        adapter = new GroupListviewAdapter(list, getActivity());
 
-        ctrl = new GroupController(list, adapter);
         //handle listview and assign adapter
+        lView = (ListView)root.findViewById(R.id.groupListview);
+        lView.setAdapter(adapter);
 
-        ListView lView = (ListView)root.findViewById(R.id.groupListview);
-        lView.setAdapter(ctrl.getMPA());
+        /*
+        Intent C = getActivity().getIntent();
+        if(C.getBooleanExtra("check", false)){
+            onActivityResult(REQUEST_ADD, RESULT_OK, C);
+        }*/
 
-
-        ctrl.getMPA().setOnItemClickListener(new GroupListviewAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new GroupListviewAdapter.OnItemClickListener() {
 
             @Override
             public void onDeleteClick(int position) {
@@ -91,49 +86,55 @@ public class GroupListFragment extends Fragment {
             @Override
             public void onChangeClick(int position) {
                 changeItem(position);
-
             }
         });
-
-
-
-
-
-
-
-
-
-
 
         return root;
     }
 
 
-    //
+    // 실제 삭제
     public void removeItem(int position){
-        ctrl.getMdatas().remove(position);
-        ctrl.getMPA().notifyDataSetChanged();
-    }
-    public void changeItem(int position) {
 
+        // position의 그룹명을 알아오고
+        // user의 그룹 내역을 수정, 저장하고
+        // 해당 그룹에서 user 정보 삭제하고.
+
+        Group delgroup = list.get(position);
+        groupManagementController = new GroupManagementController(delgroup.getName(), MainActivity.User);
+        groupManagementController.DelGroup(delgroup.getName());
+
+        list.remove(delgroup.getName());
+        list.clear();
+        list = groupManagementController.FindAllUserGroup(MainActivity.User.getID());
+        //adapter = new GroupListviewAdapter(list, getActivity());
+        adapter.list = list;
+        lView.setAdapter(adapter);
+    }
+    // 실제 수정 - Modification에서 처리
+    public void changeItem(int position) {
 
         Intent X = new Intent(getActivity(), GroupModificationForm.class);
         X.putExtra("id", position);
-        X.putExtra("name",ctrl.getMdatas().get(position).getName());
-        X.putExtra("description", ctrl.getMdatas().get(position).getDescription());
-        X.putExtra("groupmem", ctrl.getMdatas().get(position).getGroupMembers());
+        X.putExtra("name",list.get(position).getName());
+        X.putExtra("description", list.get(position).getDescription());
+        String members = new String();
+        for(int i = 0; i < list.get(position).getGroupMembers().size(); i++){
+            members += list.get(position).getGroupMembers().get(i).getID() + " ";
+        }
+        X.putExtra("groupmem", members);
 
         startActivityForResult(X, REQUEST_MOD);
-
-
 
         Intent B = getActivity().getIntent();
         if (B.getBooleanExtra("check", false)) {
             onActivityResult(REQUEST_MOD, RESULT_OK, B);
         }
-        ctrl.getMPA().notifyDataSetChanged();
+        list.clear();
+        list = groupManagementController.FindAllUserGroup(MainActivity.User.getID());
+        adapter.list = list;
+        lView.setAdapter(adapter);
     }
-
 
 
 
@@ -164,27 +165,35 @@ public class GroupListFragment extends Fragment {
             return;
         }
         if(requestCode == REQUEST_ADD){
-            ctrl.getMdatas().add(new Group(data.getStringExtra("name"), data.getStringExtra("description"), data.getStringArrayListExtra("groupmem")));
+            // list update
+
+            list = groupManagementController.FindAllUserGroup(MainActivity.User.getID());
+            //list.add(new Group(data.getStringExtra("name"), data.getStringExtra("description"), data.getStringArrayListExtra("groupmem")));
             Intent C = getActivity().getIntent();
             if(C.getBooleanExtra("check", false)){
                 onActivityResult(REQUEST_ADD, RESULT_OK, C);
             }
 
-            ctrl.getMPA().notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
+            lView.setAdapter(adapter);
         }
 
         if(requestCode == REQUEST_MOD){
-            int position = data.getIntExtra("id2",1);
+            // list update
+
+            list = groupManagementController.FindAllUserGroup(MainActivity.User.getID());
+
+            //int position = data.getIntExtra("id2",1);
 
 
 
-            Group g = ctrl.getMdatas().get(position);
-            g.setName(data.getStringExtra("name"));
-            g.setDescription(data.getStringExtra("description"));
-            g.setGroupMembers(data.getStringArrayListExtra("groupmem"));
+            //Group g = list.get(position);
+            //g.setName(data.getStringExtra("name"));
+            //g.setDescription(data.getStringExtra("description"));
+            //g.setGroupMembers(data.getStringArrayListExtra("groupmem"));
 
-            ctrl.getMPA().notifyDataSetChanged();
-
+            adapter.notifyDataSetChanged();
+            lView.setAdapter(adapter);
         }
 
     }

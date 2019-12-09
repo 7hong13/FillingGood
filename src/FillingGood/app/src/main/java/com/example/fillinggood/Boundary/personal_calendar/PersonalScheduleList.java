@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,10 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.example.fillinggood.Boundary.home.MainActivity;
+import com.example.fillinggood.Control.PersonalScheduleController;
+import com.example.fillinggood.Entity.Group;
+import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.Entity.PersonalSchedule;
 import com.example.fillinggood.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -39,6 +44,7 @@ import java.util.Set;
 
 //날짜를 선택할시, 해당 날짜에 등록된 일정들을 list-up하는 class 입니다
 public class PersonalScheduleList extends Fragment {
+    PersonalScheduleController personalScheduleController = new PersonalScheduleController();
 
     private String date;
     public PersonalScheduleList() {
@@ -64,29 +70,11 @@ public class PersonalScheduleList extends Fragment {
                              Bundle savedInstanceState){
         View root = inflater.inflate(R.layout.personal_schedule_list, container, false);
 
-        //GUI가 어떻게 구성되는지 보여주기 위한 arraylist로, DB 구축 후 지우고 사용해주세요
-        /*
-        ArrayList<PersonalSchedule> eventsList = getPersonalSchedule(userID);
-        (아래 코드 지우기)
-        * */
-        ArrayList<PersonalSchedule> eventsList = new ArrayList<>();
-        PersonalSchedule event1 = new PersonalSchedule("조별과제", "문휴", "융종설 조별모임", "불가", "2019.12.5", "12:00", "13:00");
-        eventsList.add(event1);
-        PersonalSchedule event2 = new PersonalSchedule("약속", "신촌역", "친구랑 영화", "가능", "2019.12.5", "14:00", "16:00");
-        eventsList.add(event2);
-        PersonalSchedule event3 = new PersonalSchedule("알바", "대흥역", "카페 알바", "약간 가능", "2019.12.8", "12:00", "17:00");
-        eventsList.add(event3);
-        PersonalSchedule event4 = new PersonalSchedule("수업", "J관", "전공 수업", "불가", "2019.12.8", "09:00", "10:15");
-        eventsList.add(event4);
-        PersonalSchedule event5 = new PersonalSchedule("수업", "K관", "교양 수업", "불가", "2019.12.8", "10:30", "12:00");
-        eventsList.add(event5);
-        PersonalSchedule event6 = new PersonalSchedule("스터디", "GN관", "알고리즘 스터디", "null", "2019.12.10", "15:00", "16:00");
-        eventsList.add(event6);
+        ArrayList<PersonalSchedule> eventsList = personalScheduleController.getAllPS(MainActivity.User.getID());
 
         //날짜별 일정을 시간 오름차순으로 정렬
         Collections.sort(eventsList, myComparator);
 
-        //GUI가 어떻게 구성되는지 보여주기 위한 코드로, DB 구축 후 적절한 코드로 대체해주세요
         ArrayList<String> eventsForSelectedDay = new ArrayList<>();
 
         Iterator<PersonalSchedule> iter1 = eventsList.iterator(); // iterator(반복자)를 얻는다.
@@ -96,6 +84,20 @@ public class PersonalScheduleList extends Fragment {
                 //"일정명 (00:00~00:00)" 형태 string으로 변환
                 String s = p.getName()+" ("+p.getStartTime()+"~"+p.getEndTime()+")";
                 eventsForSelectedDay.add(s);
+            }
+        }
+
+        ArrayList<Group> groups = Group.getAllUsersGroup(MainActivity.User.getID());
+        for (int i=0; i<groups.size(); i++){
+            ArrayList<GroupSchedule> gs = GroupSchedule.getGroupSchedule(groups.get(i).getName());
+            Iterator<GroupSchedule> iter = gs.iterator();
+            while (iter.hasNext()){
+                GroupSchedule g = iter.next();
+                if (date.equals(g.getDate())){
+                    //"일정명 (00:00~00:00)" 형태 string으로 변환
+                    String s = "["+g.getGroupName()+"]"+g.getName()+" ("+g.getStartTime()+"~"+g.getEndTime()+")";
+                    eventsForSelectedDay.add(s);
+                }
             }
         }
 
@@ -115,6 +117,8 @@ public class PersonalScheduleList extends Fragment {
                 //일정명 (00:00PM~00:00PM)
                 intent = new Intent(getActivity(),PersonalScheduleModificationForm.class);
                 String s = (String)parent.getItemAtPosition(position);
+                if(s.charAt(0) == '[') return;
+                //if(s.contains("[")) return;
                 int n = s.length();
 
                 intent.putExtra("name", s.substring(0,n-14));

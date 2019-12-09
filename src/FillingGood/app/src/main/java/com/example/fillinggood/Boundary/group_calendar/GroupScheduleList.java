@@ -3,12 +3,14 @@ package com.example.fillinggood.Boundary.group_calendar;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fillinggood.Boundary.DBboundary.DBmanager;
 import com.example.fillinggood.Boundary.personal_calendar.PersonalScheduleAdditionForm;
 import com.example.fillinggood.Entity.GroupSchedule;
 import com.example.fillinggood.R;
@@ -44,16 +46,15 @@ public class GroupScheduleList extends AppCompatActivity {
         ArrayList<GroupSchedule> meetingsList = getGroupSchedule(groupName);
         아래 코드 나중에 지워주세요
         * */
-        ArrayList<GroupSchedule> meetingsList = new ArrayList<>();
-        //choicedTimeRank와 choicedLocationRank가 -1일 때, 아직 추천을 안 받았다고 가정
-        meetingsList.add(new GroupSchedule("4조","융종설 모임", "스타벅스", "추천 알고리즘 토의 모임", "2019.11.20", "15:00", "16:00", 1, 1));
-        meetingsList.add(new GroupSchedule("4조","융종설 모임", "미정", "유스케이스 스펙 작성 토의", "미정", "미정", "미정", -1, -1));
+        ArrayList<GroupSchedule> meetingsList = DBmanager.getInstance().getGroupSchedule(groupName);
+        if(meetingsList.size() < 1)
+            meetingsList = new ArrayList<>();
 
         /*
         //일정들을 날짜 오름차순으로 정렬
         Collections.sort(meetingsList, myComparator);*/
 
-        //meetingsList에 들어있는 일정들을 GroupSheduleListviewAdapter의 논리에 따라 화면상에 출력한다는 코드
+        //meetingsList에 들어있는 일정들을 GroupSheduleListviewAdapter의 논리에 따라 화면상에 출력한다는 코드 < meetingList 0 없을때 돌아가나..?
         GroupScheduleListviewAdapter adapter = new GroupScheduleListviewAdapter(meetingsList, this);
         ListView listview = (ListView) findViewById(R.id.group_schedule_listview) ;
         listview.setAdapter(adapter);

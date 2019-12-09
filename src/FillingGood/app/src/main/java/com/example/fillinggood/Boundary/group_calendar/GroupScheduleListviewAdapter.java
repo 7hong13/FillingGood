@@ -60,7 +60,7 @@ public class GroupScheduleListviewAdapter extends BaseAdapter implements ListAda
         //나중에 아래 if문 지워주세요
         if (groupScheduleList.get(position).getChoicedTimeRank()==-1 && groupScheduleList.get(position).getChoicedTimeRank()==-1)
             return 1;
-        //추천을 이미 받은 경우
+            //추천을 이미 받은 경우
         else return 0;
     }
     public static class ViewHolder {
