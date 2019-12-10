@@ -72,7 +72,6 @@ public class RecommendationController {
 
     // end recom
     public static void makeGsch(String groupName, String rt, int timerank, int locrank, String name, String loc){
-        Log.d("check", "start Controller makeGsch");
         GroupSchedule.makeGsch(groupName, rt, timerank, locrank, name, loc);
     }
     public static void Adjustment(Group g, String rt, double[][] tt){

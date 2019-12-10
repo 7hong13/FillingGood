@@ -66,27 +66,20 @@ public class TimeRecommendationList extends Fragment {
 
         if(DBmanager.getInstance().FindRecommendingTime(groupName)){ // 추천 중인 일정이 있음
             // 불러오기
-            rt = recommendationController.getRT(groupName);
             time = DBmanager.getInstance().getExpectTime(groupName);
+            rt = recommendationController.getRT(groupName);
         }
         else {
+            time = 60;
             rt = recommendationController.RecommendSchedule(
                     recommendationController.CreateGroupSC(thisGroup, startdate),
                     time, startdate, groupName);
-            time = 60;
         }
         Log.d("check", "" + time);
 
         // 그 그룹의 시간 가중치 테이블 불러오기
         thisGroup.getTimeTable(thisGroup.getName());
         tt = thisGroup.getGroupTimeTable();
-
-        // 피드백 과정 추가(모임장이 추천 시간 중 1번 추천시간 선택했다고 가정)
-        //?
-
-
-        // 최종적으로 선택한 시간대 가중치 -0.1
-        // thisGroup.setGroupTimeTable(Group.getFeedTimeTable(rt[0], tt));
 
 
         //ArrayList<String> list = getRecommended().. 이런식으로 작성 필요
@@ -155,7 +148,8 @@ public class TimeRecommendationList extends Fragment {
             rtidx = 4;
         else if(rank5.isChecked())
             rtidx = 5;
-        Fragment fr = new LocationRecommendationList(groupName, rt[rtidx], tt, rtidx);
+        Fragment fr = new LocationRecommendationList(groupName, rt[rtidx-1], tt, rtidx);
+        Log.d("check", ""+ rt[rtidx-1]);
         FragmentManager fm = getFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
 

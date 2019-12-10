@@ -435,9 +435,26 @@ public class DBmanager extends AppCompatActivity {
         return temp;
     }
     // 특정 그룹의 모든 일정을 저장
+    public void saveOneGroupSchedule(String groupName, GroupSchedule gs){
+        String date = gs.getDate().replace(".", "");
+        String start = gs.getStartTime().replace(":", "") + "00";
+        String end = gs.getEndTime().replace(":", "") + "00";
+        String url = query + "InsertGroupSch.php?gname=" + groupName + "&date=" + date + "&start=" + start
+                + "&end=" + end + "&name=" + gs.getName() + "&descrip=" + gs.getDescription() + "&loc=" + gs.getLocation();
+        if(gs.getChoicedTimeRank() > 0)
+            url += "&trank=" + gs.getChoicedTimeRank();
+        if(gs.getChoicedLocationRank() > 0)
+            url += "&lrank=" + gs.getChoicedLocationRank();
+        String temp = getData(url);
+        Log.d("check", ""+temp);
+        if(temp.equals("insert"))
+            return;
+        else
+            Log.d("ERROR", "GSCH insert fail");
+    }
     public void saveGroupSchedule(Group group, ArrayList<GroupSchedule> gschs){
         String groupName = group.getName();
-        String url = query + "DelAllPersonalSch.php?name=" + groupName;
+        String url = query + "DelAllGroupSch.php?name=" + groupName;
         String temp = getData(url);
 
         String date, start, end;
@@ -446,10 +463,8 @@ public class DBmanager extends AppCompatActivity {
             GroupSchedule tempgs = gschs.get(i);
             date = tempgs.getDate().replace(".", "");
             start = tempgs.getStartTime().replace(":", "") + "00";
-            if(start.length() < 6)
-                start = "0" + start;
             end = tempgs.getEndTime().replace(":", "") + "00";
-            if(end.length() < 6)
+            if(end.length() < 5)
                 end = "0" + end;
             url = query + "InsertGroupSch.php?gname=" + groupName + "&date=" + date + "&start=" + start
                     + "&end=" + end + "&name=" + tempgs.getName() + "&descrip=" + tempgs.getDescription()
@@ -740,6 +755,7 @@ public class DBmanager extends AppCompatActivity {
             if(!temp.equals("insert"))
                 Log.d("check", "" + temp);
         }
+        Log.d("check", "Insert AddRing :" + expectedTime);
     }
     // 특정 그룹의 Recommending(time) 저장
     public void saveTimeRecommending(String groupName, String userID, int rank, String date, String starTime, String endTime){
@@ -751,6 +767,7 @@ public class DBmanager extends AppCompatActivity {
         String[] temp = result.split("#");
         expectTime = Integer.parseInt(temp[0]);
         name = temp[1];
+        Log.d("check", "" + expectTime);
 
         url = query + "DelTimeRankRecomming.php?name=" + groupName + "&id=" + userID + "&rank=" + rank;
         result = getData(url);
@@ -758,14 +775,16 @@ public class DBmanager extends AppCompatActivity {
         String Date = date.replace(".", "");
         String start = starTime.replace(":", "").replace(" ","") + "00";
         String end = endTime.replace(":", "").replace(" ","") + "00";
+        Log.d("check", "start/Start : " + starTime + "/" + start);
+        Log.d("check", "end/End : " + endTime + "/" + end);
         url = query + "InsertTimeRing.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank + "&date=" + Date
                 + "&start=" + start + "&end=" + end + "&name=" + name + "&time=" + expectTime;
 
         result = getData(url);
-        if(result.equals("update"))
+        if(result.equals("insert"))
             return;
         else
-            Log.d("ERROR", "TimeRecing insert fail");
+            Log.d("ERROR", "TimeRecing insert fail ");
     }
     public void saveTimeChoiceRecommending(String groupName, String userID, int rank){
         String url = query + "UpdateTimeChoiceRecing.php?gname=" + groupName + "&id=" + userID + "&rank=" + rank;

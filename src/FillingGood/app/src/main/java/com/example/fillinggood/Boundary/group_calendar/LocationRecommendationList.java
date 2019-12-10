@@ -23,6 +23,7 @@ import com.example.fillinggood.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 //장소 추천 리스트를 보여주는 class입니다(GroupRecommendationForm 하단에 뜨는 fragment)
 public class LocationRecommendationList extends Fragment{
@@ -143,7 +144,18 @@ public class LocationRecommendationList extends Fragment{
         // 그 장소를 포함한 그와 유사한 장소 top5 추천
 
         // 직전에 모임을 한 장소이면서 피드백이 괜찮았던 장소 불러오기
-        String select_location = "PA관 1층(파관 라운지 / 파관 투썸 앞)";  // DB 맞춰서 수정 필요
+        String select_location; // DB 맞춰서 수정 필요
+        ArrayList<GroupSchedule> groupSchedules = DBmanager.getInstance().getGroupSchedule(groupName);
+        Random rand = new Random();
+        if(groupSchedules != null){
+            int idx = rand.nextInt(groupSchedules.size() - 1);
+            select_location = groupSchedules.get(idx).getLocation();
+            Log.d("check", "" + select_location);
+            if(select_location == null)
+                select_location = "PA관 1층(파관 라운지 / 파관 투썸 앞)";
+        } else{
+            select_location = "PA관 1층(파관 라운지 / 파관 투썸 앞)";
+        }
 
         if (true){
             ArrayList result = recommendationController.top_match(recommend_location, select_location);

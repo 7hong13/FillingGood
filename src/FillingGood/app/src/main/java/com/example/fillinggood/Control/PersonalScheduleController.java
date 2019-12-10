@@ -43,6 +43,8 @@ public class PersonalScheduleController {
 
     public void AddSchedule(GroupMember user, String name, String location, String description, int priority, String date, String startTime, String endTime){
         ArrayList<PersonalSchedule> personalSchedules = user.getPS();
+        if(personalSchedules == null)
+            personalSchedules = new ArrayList<>();
         PersonalSchedule personalSchedule = new PersonalSchedule(name, location, description, priority, date, startTime, endTime);
         personalSchedules.add(personalSchedule);
         //DBmanager.getInstance().savePersonalSchedule(user, personalSchedules);

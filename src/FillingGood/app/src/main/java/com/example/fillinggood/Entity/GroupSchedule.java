@@ -89,13 +89,17 @@ public class GroupSchedule extends Schedule {
 
         ArrayList<GroupMember> members = DBmanager.getInstance().getGroupMember(g.getName());
         String leaderID = DBmanager.getInstance().getGroupLeader(g.getName()).getID();
+        members.add(DBmanager.getInstance().getUser(leaderID));
         // 그룹 멤버 개개인 일정 불러오기
         for (int i = 0; i < members.size(); i++) {
             GroupMember m = members.get(i);
 
             // 개인 일정 시간 각각 분으로 분할 및 날짜 계산
             SimpleDateFormat f = new SimpleDateFormat("HH:mm", Locale.KOREA);
-            ArrayList<PersonalSchedule> PS = new ArrayList<PersonalSchedule>();
+            Log.d("check", "" + members.get(i).getID());
+            ArrayList<PersonalSchedule> PS = DBmanager.getInstance().getPersonalSchedule(members.get(i).getID());
+            if(PS == null)
+                PS = new ArrayList<>();
 
             Date d1 = null;
             Date d2 = null;
@@ -354,10 +358,14 @@ public class GroupSchedule extends Schedule {
     }
 
     public static void makeGsch(String groupName, String rt, int timerank, int locrank, String name, String loc){
-        Log.d("check", "start Entity makeGsch");
         String Date = rt.substring(0,10);
-        String Start = rt.substring(12, 16);
+        String Start = rt.substring(11, 16);
+        if(rt.substring(11,12).equals(" "))
+            Start = "0" + Start;
         String End = rt.substring(30);
+        if(rt.substring(30,31).equals(" "))
+            End = "0" + Start;
+        Log.d("check", "!!!!!!!" + Start + "!!!!!!" + End);
         GroupSchedule Recomed = new GroupSchedule();
         Recomed.date = Date;
         Recomed.startTime = Start;
@@ -365,13 +373,9 @@ public class GroupSchedule extends Schedule {
         Recomed.choicedTimeRank = timerank;
         Recomed.choicedLocationRank = locrank;
         Recomed.name = name;
-        Recomed.location = loc.replace(" ", "");
-        ArrayList<GroupSchedule> groupSchedules = DBmanager.getInstance().getGroupSchedule(groupName);
-        if(groupSchedules == null)
-            groupSchedules = new ArrayList<>();
-        groupSchedules.add(Recomed);
-        DBmanager.getInstance().saveGroupSchedule(DBmanager.getInstance().getGroupInfo(groupName), groupSchedules);
-        Log.d("check", "save");
+        Recomed.location = loc;
+        DBmanager.getInstance().saveOneGroupSchedule(groupName, Recomed);
+        //DBmanager.getInstance().saveGroupSchedule(DBmanager.getInstance().getGroupInfo(groupName), groupSchedules);
         // Del Recommending
         DBmanager.getInstance().DelRecommending(groupName);
     }

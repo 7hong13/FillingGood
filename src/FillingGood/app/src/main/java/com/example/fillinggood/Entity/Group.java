@@ -88,10 +88,22 @@ public class Group {
     }
     public static ArrayList<Group> getAllUsersGroup(String userID){
         ArrayList<Group> groups = DBmanager.getInstance().getUserGroup(userID);
+        if(groups == null)
+            return new ArrayList<>();
+        ArrayList<GroupMember> members;
+        GroupMember leader;
         for(int i = 0; i < groups.size(); i++){
             Group temp = groups.get(i);
-            temp.setGroupMembers(DBmanager.getInstance().getGroupMember(temp.getName()));
-            temp.setGroupLeader(DBmanager.getInstance().getGroupLeader(temp.getName()));
+            members = DBmanager.getInstance().getGroupMember(temp.getName());
+            if(members == null)
+                temp.setGroupMembers(new ArrayList<GroupMember>());
+            else
+                temp.setGroupMembers(members);
+            leader = DBmanager.getInstance().getGroupLeader(temp.getName());
+            if(leader == null)
+                temp.setGroupLeader(new GroupMember());
+            else
+                temp.setGroupLeader(leader);
         }
         return groups;
     }
